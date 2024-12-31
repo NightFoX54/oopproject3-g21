@@ -40,6 +40,7 @@ public class sessionChooser {
         stage.setScene(scene);
         stage.show();
         passChangeCont.prevPage = "sessionDecision.fxml";
+        passChangeCont.stage2 = secondController.stage;
     }
 
     @FXML
@@ -50,10 +51,13 @@ public class sessionChooser {
         stage.setScene(scene);
         stage.show();
         Main.currentUser = null;
+        secondController.stage.close();
+        MovieController.secondController = null;
     }
 
     @FXML
     private void goToSearch(ActionEvent e) throws IOException {
+        secondController.goToSearch();
         Parent root = FXMLLoader.load(getClass().getResource("sinema.fxml"));
         Stage stage = (Stage)((Node)e.getSource()).getScene().getWindow();
         Scene scene = new Scene(root);
@@ -96,7 +100,7 @@ public class sessionChooser {
 
         // Add the VBox to the TilePane
         sessionFlowPane.getChildren().add(movieBox);
-
+        secondController.showMovie(movieName,genre,summary,posterPath);
         showSessions();
     }
 
@@ -123,7 +127,7 @@ public class sessionChooser {
                 String hall_capacity = res2.getString("capacity");
                 int seat_rows = res2.getInt("seat_row_count");
                 int seat_cols = res2.getInt("seat_col_count");
-
+                secondController.showSession(hall_name, hall_capacity, available_seats, schedule_date, start_time);
                 Label nameLabel = new Label("Hall Name: " + hall_name);
                 Label capacityLabel = new Label("Hall Capacity: " + hall_capacity);
                 Label scheduleLabel = new Label("Session Date: " + schedule_date);
@@ -141,6 +145,7 @@ public class sessionChooser {
                     seatSelection.rows = seat_rows;
                     Parent root = null;
                     try {
+                        secondController.goToSeatSelection();
                         root = FXMLLoader.load(getClass().getResource("seatSelection.fxml"));
                     } catch (IOException ex) {
                         throw new RuntimeException(ex);

@@ -21,7 +21,7 @@ public class CustomerSearch {
     @FXML
     private TilePane TilePane;
 
-    public Stage stage;
+    public Stage stage = new Stage();
 
     @FXML
     public void initialize() throws IOException {
@@ -42,8 +42,8 @@ public class CustomerSearch {
 
         // Load the movie poster image
         ImageView imageView = new ImageView(image);
-        imageView.setFitWidth(350); // Set width for the poster
-        imageView.setFitHeight(470);
+        imageView.setFitWidth(390); // Set width for the poster
+        imageView.setFitHeight(510);
         imageView.setPreserveRatio(true); // Maintain the aspect ratio
 
         // Create a Label for the movie title
@@ -54,6 +54,7 @@ public class CustomerSearch {
 
         // Add the image and title to the VBox
         movieBox.getChildren().addAll(imageView, titleLabel, genreLabel, summaryLabel);
+        movieBox.setPrefWidth(390);
 
         // Add the VBox to the TilePane
         this.TilePane.getChildren().add(movieBox);
@@ -61,10 +62,13 @@ public class CustomerSearch {
 
     @FXML
     public void goToSessions() throws IOException {
-        Parent root = FXMLLoader.load(getClass().getResource("customerSession.fxml"));
-        Scene scene = new Scene(root);
-        stage.setScene(scene);
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("customerSession.fxml"));
+        Parent root = loader.load();
+        CustomerSession secondController = loader.getController();
         stage.setTitle("Group21 CinemaCenter");
+        stage.setScene(new Scene(root));
         stage.show();
+        secondController.stage = stage;
+        sessionChooser.secondController = secondController;
     }
 }

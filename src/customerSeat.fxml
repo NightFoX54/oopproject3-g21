@@ -1,14 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.TilePane?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="CustomerSeat"
-            prefHeight="400.0" prefWidth="600.0">
 
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="CustomerSeat">
+   <children>
+      <AnchorPane fx:id="Pane" layoutX="160.0" layoutY="60.0" prefHeight="750.0" prefWidth="1050.0">
+         <children>
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#e2e6e9" height="122.0" layoutX="75.0" layoutY="580.0" stroke="BLACK" strokeType="INSIDE" width="900.0" />
+            <Label layoutX="479.0" layoutY="623.0" prefHeight="30.0" prefWidth="92.0" text="SCREEN">
+               <font>
+                  <Font size="25.0" />
+               </font>
+            </Label>
+         </children>
+      </AnchorPane>
+      <TilePane fx:id="movieTile" layoutX="24.0" layoutY="41.0" prefHeight="350.0" prefWidth="137.0" />
+   </children>
 </AnchorPane>

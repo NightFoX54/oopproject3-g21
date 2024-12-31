@@ -35,6 +35,7 @@ public class loginControl {
             scene = new Scene(root);
             stage.setScene(scene);
             stage.show();
+
         }
         else{
             warning.setText("Incorrect Username or Password! Try again!");

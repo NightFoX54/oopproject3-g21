@@ -8,7 +8,7 @@
    <children>
       <ScrollPane prefHeight="800.0" prefWidth="1200.0">
          <content>
-            <TilePane fx:id="TilePane" hgap="25" prefColumns="3" prefHeight="798.0" prefTileHeight="700" prefTileWidth="350" prefWidth="1150.0" vgap="10" />
+            <TilePane fx:id="TilePane" hgap="50" prefColumns="3" prefHeight="798.0" prefTileHeight="750" prefTileWidth="350" prefWidth="1150.0" vgap="10" />
          </content>
       </ScrollPane>
    </children>

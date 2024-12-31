@@ -33,18 +33,21 @@ public class MovieController {
     @FXML
     private Label name;
 
-    private CustomerSearch secondController;
+    public static CustomerSearch secondController;
+
 
     @FXML
     public void initialize() throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("customerSearch.fxml"));
-        Parent root = loader.load();
+        if(secondController == null) {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("customerSearch.fxml"));
+            Parent root = loader.load();
 
-        secondController = loader.getController();
-        secondController.stage = new Stage();
-        secondController.stage.setTitle("Group21 CinemaCenter");
-        secondController.stage.setScene(new Scene(root));
-        secondController.stage.show();
+            secondController = loader.getController();
+            secondController.stage = new Stage();
+            secondController.stage.setTitle("Group21 CinemaCenter");
+            secondController.stage.setScene(new Scene(root));
+            secondController.stage.show();
+        }
         displayMovies("",""); // Display all movies initially
 
 
@@ -67,6 +70,7 @@ public class MovieController {
         stage.setScene(scene);
         stage.show();
         passChangeCont.prevPage = "sinema.fxml";
+        passChangeCont.stage2 = secondController.stage;
     }
 
     @FXML
@@ -76,7 +80,9 @@ public class MovieController {
         Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
-        //Main.currentUser = null;
+        Main.currentUser = null;
+        secondController.stage.close();
+        secondController = null;
     }
 
     private void displayMovies(String genre, String name) {

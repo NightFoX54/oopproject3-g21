@@ -29,6 +29,8 @@ public class passChangeCont {
     @FXML
     Label warning;
 
+    public static Stage stage2;
+
     public void prevMenu(ActionEvent event) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource(prevPage));
         Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
@@ -39,6 +41,8 @@ public class passChangeCont {
     }
 
     public void passChange(ActionEvent event) throws IOException {
+        if(stage2 != null)
+            stage2.close();
         String oldPass = this.oldPass.getText();
         String newPass = this.newPass.getText();
         String newPass2 = this.newPass2.getText();
@@ -68,6 +72,7 @@ public class passChangeCont {
             scene = new Scene(root);
             stage.setScene(scene);
             stage.show();
+            MovieController.secondController = null;
         }
         else if(!newPass.equals(newPass2)) {
             warning.setText("Both new password sections needs to be the same! Try again!");

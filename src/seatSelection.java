@@ -36,6 +36,7 @@ public class seatSelection {
     public static String sessionDate = "2025-01-01";
     public static String sessionTime = "14:00:00";
     public static String movieName = "movie_A";
+    public static CustomerSeat secondController;
     @FXML
     Label name;
     @FXML
@@ -58,6 +59,10 @@ public class seatSelection {
         imageView.setPreserveRatio(true);
         movieBox.getChildren().addAll(imageView, titleLabel, hallLabel, dateLabel, timeLabel);
         movieTile.getChildren().add(movieBox);
+        if(secondController.seat == 0) {
+            secondController.showMovie(movieName, hallName, sessionDate, sessionTime, posterPath);
+            secondController.seat = 1;
+        }
     }
 
     @FXML
@@ -110,6 +115,7 @@ public class seatSelection {
                 grid.setLayoutX(225 - buttonSize - gap);
                 grid.setLayoutY(30);
                 String seatName = rowChar + "" + String.valueOf(col);
+                String seat = String.valueOf(row) + "" + String.valueOf(col);
                 if(selectedSeats.contains(seatName)){
                     seatButton.setStyle("-fx-background-color: red;");
                 }
@@ -125,10 +131,12 @@ public class seatSelection {
                         if (style.contains("red")) {
                             seatButton.setStyle("-fx-background-color: transparent;");
                             selectedSeats.remove(seatName);
+                            secondController.updateSeats(seat,buttonSize,0);
                         }
                         else {
                             seatButton.setStyle("-fx-background-color: red;");
                             selectedSeats.add(seatName);
+                            secondController.updateSeats(seat,buttonSize,1);
                         }
                     });
                 }
@@ -136,6 +144,11 @@ public class seatSelection {
             rowChar--;
 
         }
+        if(secondController.seat == 1) {
+            secondController.showSeats(rows, cols, soldSeats, selectedSeats);
+            secondController.seat = 2;
+        }
+
         pane.getChildren().add(grid);
     }
 
@@ -165,6 +178,7 @@ public class seatSelection {
         stage.setScene(scene);
         stage.show();
         passChangeCont.prevPage = "seatSelection.fxml";
+        passChangeCont.stage2 = secondController.stage;
     }
 
     @FXML
@@ -176,16 +190,21 @@ public class seatSelection {
         stage.show();
         Main.currentUser = null;
         selectedSeats = new ArrayList<>();
+        secondController.stage.close();
+        MovieController.secondController = null;
+        
     }
 
     @FXML
     private void goToSearch(ActionEvent e) throws IOException {
+        secondController.goToSearch();
         Parent root = FXMLLoader.load(getClass().getResource("sinema.fxml"));
         Stage stage = (Stage)((Node)e.getSource()).getScene().getWindow();
         Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
         selectedSeats = new ArrayList<>();
+
     }
 
     @FXML
@@ -204,11 +223,13 @@ public class seatSelection {
         } catch (SQLException ex) {
             throw new RuntimeException(ex);
         }
+        secondController.goToSession();
         Parent root = FXMLLoader.load(getClass().getResource("sessionDecision.fxml"));
         Stage stage = (Stage)((Node)e.getSource()).getScene().getWindow();
         Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
+
 
     }
 
@@ -217,6 +238,7 @@ public class seatSelection {
         if(!selectedSeats.isEmpty()) {
             ageConfirmation.selectedSeats = selectedSeats;
             ageConfirmation.movieBox = movieBox;
+            secondController.goToCart();
             Parent root = FXMLLoader.load(getClass().getResource("ageConfirmation.fxml"));
             Stage stage = (Stage) ((Node) e.getSource()).getScene().getWindow();
             Scene scene = new Scene(root);

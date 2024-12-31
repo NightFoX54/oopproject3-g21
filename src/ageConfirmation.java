@@ -27,6 +27,7 @@ public class ageConfirmation {
     public static double ticketTax = 0.2;
     public static double extrasTax = 0.1;
     public static DecimalFormat df = new DecimalFormat("#.##");
+    public static CustomerCart secondController;
     @FXML
     Label totalPrice;
     private static double total_price = 0.0;
