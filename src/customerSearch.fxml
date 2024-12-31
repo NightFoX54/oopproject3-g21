@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.TilePane?>
+
+<AnchorPane prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="CustomerSearch">
+   <children>
+      <ScrollPane prefHeight="800.0" prefWidth="1200.0">
+         <content>
+            <TilePane fx:id="TilePane" hgap="25" prefColumns="3" prefHeight="798.0" prefTileHeight="700" prefTileWidth="350" prefWidth="1150.0" vgap="10" />
+         </content>
+      </ScrollPane>
+   </children>
+</AnchorPane>
