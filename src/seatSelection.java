@@ -31,11 +31,11 @@ public class seatSelection {
     public static int rows;
     public static int cols;
     public static int session_id = 1;
-    public static String posterPath = "photos/bladerunner.jpg";
-    public static String hallName = "Hall_A";
-    public static String sessionDate = "2025-01-01";
-    public static String sessionTime = "14:00:00";
-    public static String movieName = "movie_A";
+    public static String posterPath;
+    public static String hallName;
+    public static String sessionDate;
+    public static String sessionTime;
+    public static String movieName;
     public static CustomerSeat secondController;
     @FXML
     Label name;
@@ -237,7 +237,11 @@ public class seatSelection {
     private void confirmSelection(ActionEvent e) throws IOException {
         if(!selectedSeats.isEmpty()) {
             ageConfirmation.selectedSeats = selectedSeats;
-            ageConfirmation.movieBox = movieBox;
+            ageConfirmation.movieName = movieName;
+            ageConfirmation.posterPath = posterPath;
+            ageConfirmation.hallName = hallName;
+            ageConfirmation.sessionDate = sessionDate;
+            ageConfirmation.sessionTime = sessionTime;
             secondController.goToCart();
             Parent root = FXMLLoader.load(getClass().getResource("ageConfirmation.fxml"));
             Stage stage = (Stage) ((Node) e.getSource()).getScene().getWindow();

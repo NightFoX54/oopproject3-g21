@@ -27,10 +27,15 @@ public class ageConfirmation {
     public static double ticketTax = 0.2;
     public static double extrasTax = 0.1;
     public static DecimalFormat df = new DecimalFormat("#.##");
-    public static CustomerCart secondController;
+    public static CustomerCart secondController = new CustomerCart();
+    public static String movieName;
+    public static String posterPath;
+    public static String hallName;
+    public static String sessionDate;
+    public static String sessionTime;
     @FXML
     Label totalPrice;
-    private static double total_price = 0.0;
+    public static double total_price = 0.0;
 
 
     public static VBox movieBox;
@@ -68,7 +73,21 @@ public class ageConfirmation {
         } finally {
         }
         name.setText("Welcome " + Main.currentUser.name + " " + Main.currentUser.surname + "!");
+        Label titleLabel = new Label("Title: " + movieName);
+        Label hallLabel = new Label("Hall: " + hallName);
+        Label dateLabel = new Label("Date: " + sessionDate);
+        Label timeLabel = new Label("Time: " + sessionTime);
+        Image image = new Image(getClass().getResourceAsStream(posterPath));
+        movieBox = new VBox();
+        movieBox.setSpacing(5); // Space between the image and the title
+
+        // Load the movie poster image
+        ImageView imageView = new ImageView(image);
+        imageView.setFitWidth(200); // Set width for the poster
+        imageView.setPreserveRatio(true);
+        movieBox.getChildren().addAll(imageView, titleLabel, hallLabel, dateLabel, timeLabel);
         moviePane.getChildren().add(movieBox);
+        secondController.showMovie(movieName,hallName,sessionDate,sessionTime,posterPath);
         VBox mainBox = new VBox();
         for(String seat : selectedSeats) {
             Label seatLabel = new Label("Seat " + seat + " is selected for: ");
@@ -121,6 +140,7 @@ public class ageConfirmation {
                             total_price = 0;
                         String totalString = String.format("%.2f", total_price);
                         totalPrice.setText("Total Price: " + totalString);
+                        secondController.updatePrice(totalString);
                     } else {
                         confirmLabel = new Label("No discount!");
                         confirmLabel.setFont(Font.font(15));
@@ -132,9 +152,11 @@ public class ageConfirmation {
                             total_price = 0;
                         String totalString = String.format("%.2f", total_price);
                         totalPrice.setText("Total Price: " + totalString);
+                        secondController.updatePrice(totalString);
                     }
-                    SeatInfo info = new SeatInfo(seat,custName + custSurname, age.getValue());
+                    SeatInfo info = new SeatInfo(seat,custName + " " + custSurname, age.getValue());
                     seatsToSell.add(info);
+                    secondController.updateTickets(seatsToSell,selectedSeats,ageDiscount);
                     box.getChildren().addAll(seatLabel ,nameLabel, surnameLabel, ageLabel, confirmLabel);
                 }
                 else if(name.getText().isEmpty() && surname.getText().isEmpty()){
@@ -165,6 +187,7 @@ public class ageConfirmation {
                     box.getChildren().addAll(warningLabel);
                 }
             });
+            secondController.updateTickets(null,selectedSeats,ageDiscount);
             box.getChildren().addAll(seatLabel, name, surname, text, age, confirm);
             mainBox.getChildren().add(box);
         }
@@ -209,12 +232,14 @@ public class ageConfirmation {
                                 df.format(total_tax);
                                 total_price += (quantity.getValue() - currExtra.extrasCount) * extrasPrice * (1 + extrasTax);
                                 currExtra.extrasCount = quantity.getValue();
+                                secondController.updateExtras(soldExtras);
                             }
                         }
                         if(total_price < 0)
                             total_price = 0;
                         String totalString = String.format("%.2f", total_price);
                         totalPrice.setText("Total Price: " + totalString);
+                        secondController.updatePrice(totalString);
 
                         if (!newValue.matches("\\d*")) { // Regex to allow only digits
                             quantity.getEditor().setText(newValue.replaceAll("[^\\d]", ""));
@@ -224,6 +249,7 @@ public class ageConfirmation {
                     mainBox.getChildren().addAll(extras);
                 }
             }
+            secondController.updateExtras(soldExtras);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
