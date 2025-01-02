@@ -1,5 +1,8 @@
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -9,6 +12,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class CustomerCart {
@@ -27,8 +31,9 @@ public class CustomerCart {
     private VBox extrasBox = new VBox();
 
     public void updateTickets(ArrayList<SeatInfo> seatsToSell, ArrayList<String> selectedSeats, int ageDiscount){
-        ticketBox.setSpacing(15);
+        ticketBox.setSpacing(20);
         ticketBox.getChildren().clear();
+        ticketBox.setPrefHeight(0);
         if(seatsToSell == null){
             for(String seat : selectedSeats) {
                 Label seatLabel = new Label("Seat " + seat + " is selected");
@@ -121,6 +126,41 @@ public class CustomerCart {
         imageView.setPreserveRatio(true);
         movieBox.getChildren().addAll(imageView, titleLabel, hallLabel, dateLabel, timeLabel);
         moviePane.getChildren().add(movieBox);
+        ticketBox.setPrefWidth(0);
+        extrasBox.setPrefWidth(0);
         agePane.getChildren().addAll(ticketBox, extrasBox);
+    }
+
+    public void goToSearch() throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("customerSearch.fxml"));
+        Parent root = loader.load();
+        CustomerSearch secondController = loader.getController();
+        stage.setTitle("Group21 CinemaCenter");
+        stage.setScene(new Scene(root));
+        stage.show();
+        secondController.stage = stage;
+        MovieController.secondController = secondController;
+    }
+
+    public void goToSession() throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("customerSession.fxml"));
+        Parent root = loader.load();
+        CustomerSession secondController = loader.getController();
+        stage.setTitle("Group21 CinemaCenter");
+        stage.setScene(new Scene(root));
+        stage.show();
+        secondController.stage = stage;
+        sessionChooser.secondController = secondController;
+    }
+
+    public void goToSeat() throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("customerSeat.fxml"));
+        Parent root = loader.load();
+        CustomerSeat secondController = loader.getController();
+        stage.setTitle("Group21 CinemaCenter");
+        stage.setScene(new Scene(root));
+        stage.show();
+        secondController.stage = stage;
+        seatSelection.secondController = secondController;
     }
 }
