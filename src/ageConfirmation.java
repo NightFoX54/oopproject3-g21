@@ -1,3 +1,8 @@
+import com.itextpdf.kernel.geom.PageSize;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.layout.Document;
+import com.itextpdf.layout.element.Paragraph;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -13,13 +18,17 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.scene.image.ImageView;
+
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.*;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 public class ageConfirmation {
+    public static int deneme = 0;
     public static ArrayList<String> selectedSeats = new ArrayList<String>();
     public static ArrayList<SeatInfo> seatsToSell;
     public static ArrayList<extrasInfo> soldExtras;
@@ -33,10 +42,18 @@ public class ageConfirmation {
     public static String hallName;
     public static String sessionDate;
     public static String sessionTime;
+    private static List<Spinner<Integer>> spinners = new ArrayList<>();
     @FXML
     Label totalPrice;
     public static double total_price = 0.0;
 
+    private int confirmed = 0;
+
+    @FXML
+    Label paymentLabel;
+
+    @FXML
+    Button confirmButton;
 
     public static VBox movieBox;
     @FXML
@@ -47,8 +64,10 @@ public class ageConfirmation {
     Label name;
     @FXML
     public void initialize() {
+        confirmed = 0;
+        paymentLabel.setStyle("-fx-text-fill: transparent");
         soldExtras = new ArrayList<>();
-        ArrayList<SeatInfo> seatsToSell = new ArrayList<>();
+        seatsToSell = new ArrayList<>();
         Collections.sort(selectedSeats);
         total_price = 0;
         String query = "SELECT * FROM prices WHERE name = ?";
@@ -74,9 +93,13 @@ public class ageConfirmation {
         }
         name.setText("Welcome " + Main.currentUser.name + " " + Main.currentUser.surname + "!");
         Label titleLabel = new Label("Title: " + movieName);
+        titleLabel.getStyleClass().add("no-hover");
         Label hallLabel = new Label("Hall: " + hallName);
+        hallLabel.getStyleClass().add("no-hover");
         Label dateLabel = new Label("Date: " + sessionDate);
+        dateLabel.getStyleClass().add("no-hover");
         Label timeLabel = new Label("Time: " + sessionTime);
+        timeLabel.getStyleClass().add("no-hover");
         Image image = new Image(getClass().getResourceAsStream(posterPath));
         movieBox = new VBox();
         movieBox.setSpacing(5); // Space between the image and the title
@@ -87,25 +110,32 @@ public class ageConfirmation {
         imageView.setPreserveRatio(true);
         movieBox.getChildren().addAll(imageView, titleLabel, hallLabel, dateLabel, timeLabel);
         moviePane.getChildren().add(movieBox);
-        secondController.showMovie(movieName,hallName,sessionDate,sessionTime,posterPath);
+        if(secondController.moviePane.getChildren().isEmpty())
+            secondController.showMovie(movieName,hallName,sessionDate,sessionTime,posterPath);
         VBox mainBox = new VBox();
         for(String seat : selectedSeats) {
             Label seatLabel = new Label("Seat " + seat + " is selected for: ");
             seatLabel.setAlignment(Pos.CENTER);
             seatLabel.setFont(Font.font(15));
+            seatLabel.getStyleClass().add("no-hover");
             HBox box = new HBox();
+            box.setPrefWidth(920);
             box.setSpacing(10);
             mainBox.setSpacing(20);
             TextField name = new TextField();
             name.setPromptText("Name");
+            name.setPrefWidth(130);
             TextField surname = new TextField();
             surname.setPromptText("Surname");
+            surname.setPrefWidth(130);
             Label text = new Label("Age:");
             text.setAlignment(Pos.CENTER);
+            text.getStyleClass().add("no-hover");
             text.setFont(Font.font(15));
             Spinner<Integer> age = new Spinner<>();
             SpinnerValueFactory<Integer> ageValueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, 1);
             age.setValueFactory(ageValueFactory);
+            age.setPrefWidth(100);
             age.setEditable(true);
             age.getEditor().textProperty().addListener((observable, oldValue, newValue) -> {
                 if (!newValue.matches("\\d*")) { // Regex to allow only digits
@@ -116,15 +146,18 @@ public class ageConfirmation {
             confirm.setOnAction(e -> {
                 if(!(name.getText().isEmpty() || surname.getText().isEmpty())) {
                     box.getChildren().clear();
-                    String custName = name.getText().substring(0, 1).toUpperCase() + name.getText().substring(1);
+                    String custName = name.getText().substring(0, 1).toUpperCase() + name.getText().substring(1).toLowerCase();
                     Label nameLabel = new Label(custName);
+                    nameLabel.getStyleClass().add("no-hover");
                     nameLabel.setFont(Font.font(15));
                     nameLabel.setAlignment(Pos.CENTER);
-                    String custSurname = surname.getText().substring(0, 1).toUpperCase() + surname.getText();
+                    String custSurname = surname.getText().substring(0, 1).toUpperCase() + surname.getText().substring(1).toLowerCase();
                     Label surnameLabel = new Label(custSurname);
+                    surnameLabel.getStyleClass().add("no-hover");
                     surnameLabel.setFont(Font.font(15));
                     surnameLabel.setAlignment(Pos.CENTER);
                     Label ageLabel = new Label("Age: " + age.getValue());
+                    ageLabel.getStyleClass().add("no-hover");
                     ageLabel.setFont(Font.font(15));
                     ageLabel.setAlignment(Pos.CENTER);
                     int ageValue = age.getValue();
@@ -163,6 +196,7 @@ public class ageConfirmation {
                     box.getChildren().clear();
                     box.getChildren().addAll(seatLabel, name, surname, text, age, confirm);
                     Label warningLabel = new Label("Name and Surname are required!");
+                    warningLabel.getStyleClass().add("no-hover");
                     warningLabel.setFont(Font.font(15));
                     warningLabel.setAlignment(Pos.CENTER);
                     warningLabel.setStyle("-fx-text-fill: red");
@@ -172,6 +206,7 @@ public class ageConfirmation {
                     box.getChildren().clear();
                     box.getChildren().addAll(seatLabel, name, surname, text, age, confirm);
                     Label warningLabel = new Label("Surname is required!");
+                    warningLabel.getStyleClass().add("no-hover");
                     warningLabel.setFont(Font.font(15));
                     warningLabel.setAlignment(Pos.CENTER);
                     warningLabel.setStyle("-fx-text-fill: red");
@@ -181,6 +216,7 @@ public class ageConfirmation {
                     box.getChildren().clear();
                     box.getChildren().addAll(seatLabel, name, surname, text, age, confirm);
                     Label warningLabel = new Label("Name is required!");
+                    warningLabel.getStyleClass().add("no-hover");
                     warningLabel.setFont(Font.font(15));
                     warningLabel.setAlignment(Pos.CENTER);
                     warningLabel.setStyle("-fx-text-fill: red");
@@ -212,20 +248,24 @@ public class ageConfirmation {
                     extrasView.setFitHeight(50);
                     extrasView.setPreserveRatio(true);
                     Label priceLabel = new Label("Price: " + extrasPrice + "₺ + tax");
+                    priceLabel.getStyleClass().add("no-hover");
                     priceLabel.setFont(Font.font(15));
                     priceLabel.setAlignment(Pos.CENTER);
                     Label nameLabel = new Label(extrasName.substring(0, 1).toUpperCase() + extrasName.substring(1));
+                    nameLabel.getStyleClass().add("no-hover");
                     nameLabel.setFont(Font.font(15));
                     nameLabel.setAlignment(Pos.CENTER);
                     Label textLabel = new Label("Quantity: ");
+                    textLabel.getStyleClass().add("no-hover");
                     textLabel.setFont(Font.font(15));
                     textLabel.setAlignment(Pos.CENTER);
                     Spinner<Integer> quantity = new Spinner<>();
                     SpinnerValueFactory<Integer> extrasValueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, extrasStock, 0);
                     quantity.setValueFactory(extrasValueFactory);
                     quantity.setEditable(true);
-
+                    spinners.add(quantity);
                     quantity.getEditor().textProperty().addListener((observable, oldValue, newValue) -> {
+
                         for (extrasInfo currExtra : soldExtras) {
                             if (currExtra.extrasName.equals(extrasName)) {
                                 total_tax += (quantity.getValue() - currExtra.extrasCount) * extrasPrice * extrasTax;
@@ -257,6 +297,38 @@ public class ageConfirmation {
 
         agePane.getChildren().add(mainBox);
     }
+
+    @FXML
+    public void confirm() throws FileNotFoundException {
+        if(selectedSeats.size() == seatsToSell.size()) {
+            for(Spinner<Integer> spinner: spinners) {
+                spinner.setDisable(true);
+            }
+            confirmButton.setVisible(false);
+            confirmButton.setManaged(false);
+            paymentLabel.setStyle("-fx-text-fill: red");
+            paymentLabel.setText("Waiting For The Payment");
+            paymentLabel.setLayoutX(489);
+            secondController.addPaymentButton();
+            createTicket();
+        }
+        else{
+            paymentLabel.setStyle("-fx-text-fill: red");
+            paymentLabel.setText("Confirm All The Seats Before Confirming The Selections");
+            paymentLabel.setLayoutX(276);
+        }
+    }
+
+    public static void deneme() throws IOException {
+        /*Parent root = FXMLLoader.load(ageConfirmation.class.getResource("passChange.fxml"));
+        Stage stage = (Stage) spinners.get(0).getScene().getWindow();
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
+        passChangeCont.prevPage = "ageConfirmation.fxml";
+        passChangeCont.stage2 = secondController.stage;*/
+    }
+
     @FXML
     private void changePassword(ActionEvent e) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("passChange.fxml"));
@@ -267,6 +339,7 @@ public class ageConfirmation {
         passChangeCont.prevPage = "ageConfirmation.fxml";
         passChangeCont.stage2 = secondController.stage;
     }
+
 
     @FXML
     private void logOut(ActionEvent e) throws IOException {
@@ -310,6 +383,14 @@ public class ageConfirmation {
         Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
+
+    }
+
+    private static void createTicket() throws FileNotFoundException {
+
+    }
+
+    private void createInvoice(){
 
     }
 }

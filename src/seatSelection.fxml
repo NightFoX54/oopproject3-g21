@@ -7,28 +7,32 @@
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seatSelection">
+<AnchorPane prefHeight="800.0" prefWidth="1200.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seatSelection">
    <children>
       <AnchorPane fx:id="pane" layoutX="150.0" layoutY="50.0" prefHeight="750.0" prefWidth="1050.0">
          <children>
             <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#e2e6e9" height="122.0" layoutX="75.0" layoutY="580.0" stroke="BLACK" strokeType="INSIDE" width="900.0" />
-            <Label layoutX="479.0" layoutY="623.0" prefHeight="30.0" prefWidth="92.0" text="SCREEN">
+            <Label fx:id="screen" layoutX="479.0" layoutY="623.0" prefHeight="30.0" prefWidth="92.0" styleClass="no-hover" text="SCREEN">
                <font>
                   <Font size="25.0" />
                </font>
             </Label>
-            <Button layoutX="839.0" layoutY="525.0" mnemonicParsing="false" onAction="#confirmSelection" text="Confirm Seat Selection" />
+            <Button layoutX="805.0" layoutY="526.0" mnemonicParsing="false" onAction="#confirmSelection" prefHeight="35.0" prefWidth="170.0" text="Confirm Seat Selection" />
+            <Label fx:id="warningMessage" layoutX="775.0" layoutY="560.0" styleClass="no-hover" text="Please select at least one seat!" textFill="TRANSPARENT">
+               <font>
+                  <Font size="15.0" />
+               </font></Label>
          </children>
       </AnchorPane>
-      <Button fx:id="logOut" layoutX="17.0" layoutY="764.0" mnemonicParsing="false" onAction="#logOut" text="Log Out" />
-      <Button fx:id="changePassword" layoutX="17.0" layoutY="732.0" mnemonicParsing="false" onAction="#changePassword" text="Change Password" />
-      <Button layoutX="17.0" layoutY="700.0" mnemonicParsing="false" onAction="#goToSearch" text="Go Back To Search" />
-      <Label fx:id="name" alignment="CENTER_RIGHT" layoutX="720.0" layoutY="7.0" prefHeight="35.0" prefWidth="466.0" text="Welcome user">
+      <Button fx:id="logOut" layoutX="17.0" layoutY="752.0" mnemonicParsing="false" onAction="#logOut" text="Log Out" />
+      <Button fx:id="changePassword" layoutX="17.0" layoutY="708.0" mnemonicParsing="false" onAction="#changePassword" text="Change Password" />
+      <Button layoutX="17.0" layoutY="665.0" mnemonicParsing="false" onAction="#goToSearch" text="Go Back To Search" />
+      <Label fx:id="name" alignment="CENTER_RIGHT" layoutX="720.0" layoutY="7.0" prefHeight="35.0" prefWidth="466.0" styleClass="no-hover" text="Welcome user">
          <font>
             <Font size="24.0" />
          </font>
       </Label>
       <TilePane fx:id="movieTile" layoutX="14.0" layoutY="31.0" prefHeight="350.0" prefWidth="137.0" />
-      <Button layoutX="17.0" layoutY="669.0" mnemonicParsing="false" onAction="#goToSession" text="Go Back To Sessions" />
+      <Button layoutX="17.0" layoutY="623.0" mnemonicParsing="false" onAction="#goToSession" text="Go Back To Sessions" />
    </children>
 </AnchorPane>

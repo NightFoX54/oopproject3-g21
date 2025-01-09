@@ -30,6 +30,7 @@ public class MovieController {
     @FXML
     private TilePane movieTilePane; // Container for displaying movie posters
 
+
     @FXML
     private Label name;
 
@@ -46,6 +47,8 @@ public class MovieController {
             secondController.stage = new Stage();
             secondController.stage.setTitle("Group21 CinemaCenter");
             secondController.stage.setScene(new Scene(root));
+            secondController.stage.setX(50);
+            secondController.stage.setY(50);
             secondController.stage.show();
         }
         displayMovies("",""); // Display all movies initially
@@ -85,6 +88,7 @@ public class MovieController {
         secondController = null;
     }
 
+
     private void displayMovies(String genre, String name) {
         movieTilePane.getChildren().clear();
         secondController.clearMovies();
@@ -121,8 +125,11 @@ public class MovieController {
                 String id = res.getString(1);
                 secondController.showMovies(name, genre, summary, posterLocation);
                 Label titleLabel = new Label("Title: " + name);
+                titleLabel.getStyleClass().add("no-hover");
                 Label genreLabel = new Label("Genre: " + genre);
+                genreLabel.getStyleClass().add("no-hover");
                 Label summaryLabel = new Label("Summary: " + summary);
+                summaryLabel.getStyleClass().add("no-hover");
                 Image image = new Image(getClass().getResourceAsStream(posterLocation));
                 VBox movieBox = new VBox();
                 movieBox.setSpacing(5); // Space between the image and the title
@@ -173,4 +180,6 @@ public class MovieController {
         stage.setScene(scene);
         stage.show();
     }
+
 }
+

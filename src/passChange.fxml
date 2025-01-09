@@ -6,23 +6,20 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="passChangeCont">
+<AnchorPane prefHeight="800.0" prefWidth="1200.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="passChangeCont">
    <children>
-      <Button layoutX="513.0" layoutY="621.0" mnemonicParsing="false" onAction="#passChange" prefHeight="38.0" prefWidth="174.0" text="CHANGE PASSWORD">
-         <font>
-            <Font size="15.0" />
-         </font></Button>
-      <PasswordField fx:id="oldPass" layoutX="481.0" layoutY="338.0" prefHeight="52.0" prefWidth="238.0">
+      <Button layoutX="513.0" layoutY="620.0" mnemonicParsing="false" onAction="#passChange" prefHeight="39.0" prefWidth="176.0" text="CHANGE PASSWORD" />
+      <PasswordField fx:id="oldPass" layoutX="478.0" layoutY="337.0" prefHeight="52.0" prefWidth="245.0">
          <font>
             <Font size="25.0" />
          </font>
       </PasswordField>
-      <PasswordField fx:id="newPass" layoutX="481.0" layoutY="445.0" prefHeight="52.0" prefWidth="238.0">
+      <PasswordField fx:id="newPass" layoutX="477.0" layoutY="445.0" prefHeight="52.0" prefWidth="245.0">
          <font>
             <Font size="25.0" />
          </font>
       </PasswordField>
-      <PasswordField fx:id="newPass2" layoutX="481.0" layoutY="555.0" prefHeight="52.0" prefWidth="238.0">
+      <PasswordField fx:id="newPass2" layoutX="477.0" layoutY="548.0" prefHeight="52.0" prefWidth="245.0">
          <font>
             <Font size="25.0" />
          </font>
@@ -32,19 +29,19 @@
             <Font size="45.0" />
          </font>
       </Label>
-      <Label alignment="CENTER" contentDisplay="CENTER" layoutX="433.0" layoutY="293.0" prefHeight="45.0" prefWidth="335.0" text="OLD PASSWORD" textAlignment="CENTER">
+      <Label alignment="CENTER" contentDisplay="CENTER" layoutX="433.0" layoutY="292.0" prefHeight="45.0" prefWidth="335.0" text="OLD PASSWORD" textAlignment="CENTER">
          <font>
-            <Font size="25.0" />
+            <Font size="22.0" />
          </font>
       </Label>
       <Label alignment="CENTER" contentDisplay="CENTER" layoutX="433.0" layoutY="400.0" prefHeight="45.0" prefWidth="335.0" text="NEW PASSWORD" textAlignment="CENTER">
          <font>
-            <Font size="25.0" />
+            <Font size="22.0" />
          </font>
       </Label>
-      <Label alignment="CENTER" contentDisplay="CENTER" layoutX="433.0" layoutY="503.0" prefHeight="45.0" prefWidth="335.0" text="NEW PASSWORD AGAIN" textAlignment="CENTER">
+      <Label alignment="CENTER" contentDisplay="CENTER" layoutX="432.0" layoutY="502.0" prefHeight="45.0" prefWidth="335.0" text="NEW PASSWORD AGAIN" textAlignment="CENTER">
          <font>
-            <Font size="25.0" />
+            <Font size="22.0" />
          </font>
       </Label>
       <Label fx:id="warning" alignment="CENTER" layoutX="140.0" layoutY="667.0" prefHeight="27.0" prefWidth="942.0" textAlignment="CENTER" textFill="RED">
@@ -52,10 +49,6 @@
             <Font size="22.0" />
          </font>
       </Label>
-      <Button layoutX="987.0" layoutY="748.0" mnemonicParsing="false" onAction="#prevMenu" prefHeight="38.0" prefWidth="199.0" text="Go Back To Previous Menu">
-         <font>
-            <Font size="15.0" />
-         </font>
-      </Button>
+      <Button layoutX="971.0" layoutY="748.0" mnemonicParsing="false" onAction="#prevMenu" prefHeight="39.0" prefWidth="215.0" text="Go Back To Previous Menu" />
    </children>
 </AnchorPane>

@@ -6,6 +6,7 @@ import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.*;
 import java.time.LocalDate;
@@ -90,7 +91,6 @@ public class Main extends Application {
         return DriverManager.getConnection("jdbc:mysql://localhost:3306/project3","myuser","1234");
     }
     public static void main(String[] args) {
-
         launch(args);
     }
 }

@@ -8,18 +8,18 @@
 <?import javafx.scene.layout.TilePane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="MovieController">
+<AnchorPane prefHeight="800.0" prefWidth="1200.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="MovieController">
    <children>
       <TextField fx:id="nameField" layoutX="14.0" layoutY="14.0" onKeyTyped="#Search" prefHeight="25.0" prefWidth="159.0" promptText="Search for movies by name" />
       <ScrollPane layoutX="178.0" layoutY="52.0" prefHeight="748.0" prefWidth="1018.0">
          <content>
-            <TilePane fx:id="movieTilePane" hgap="25" prefColumns="3" prefTileHeight="685" prefTileWidth="300" vgap="10"/>
+            <TilePane fx:id="movieTilePane" hgap="25" prefColumns="3" prefTileHeight="685" prefTileWidth="300" vgap="10" />
          </content>
       </ScrollPane>
       <TextField fx:id="genreField" layoutX="14.0" layoutY="52.0" onKeyTyped="#Search" prefHeight="25.0" prefWidth="159.0" promptText="Search for movies by genre" />
       <Button fx:id="logOut" layoutX="14.0" layoutY="754.0" mnemonicParsing="false" onAction="#logOut" text="Log Out" />
-      <Button fx:id="changePassword" layoutX="14.0" layoutY="722.0" mnemonicParsing="false" onAction="#changePassword" text="Change Password" />
-      <Label fx:id="name" alignment="CENTER_RIGHT" layoutX="720.0" layoutY="9.0" prefHeight="35.0" prefWidth="466.0" text="Welcome user">
+      <Button fx:id="changePassword" layoutX="14.0" layoutY="711.0" mnemonicParsing="false" onAction="#changePassword" text="Change Password" />
+      <Label fx:id="name" alignment="CENTER_RIGHT" layoutX="720.0" layoutY="9.0" prefHeight="35.0" prefWidth="466.0" styleClass="no-hover" text="Welcome user">
          <font>
             <Font size="24.0" />
          </font>

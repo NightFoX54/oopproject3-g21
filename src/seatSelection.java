@@ -43,12 +43,21 @@ public class seatSelection {
     private AnchorPane pane;
     @FXML
     TilePane movieTile;
+    @FXML
+    Label screen;
+
+    @FXML
+    Label warningMessage;
 
     public void movieDetails(){
         Label titleLabel = new Label("Title: " + movieName);
+        titleLabel.getStyleClass().add("no-hover");
         Label hallLabel = new Label("Hall: " + hallName);
+        hallLabel.getStyleClass().add("no-hover");
         Label dateLabel = new Label("Date: " + sessionDate);
+        dateLabel.getStyleClass().add("no-hover");
         Label timeLabel = new Label("Time: " + sessionTime);
+        timeLabel.getStyleClass().add("no-hover");
         Image image = new Image(getClass().getResourceAsStream(posterPath));
         movieBox = new VBox();
         movieBox.setSpacing(5); // Space between the image and the title
@@ -69,13 +78,15 @@ public class seatSelection {
     public void initialize() {
 
         movieDetails();
+        warningMessage.setStyle("-fx-text-fill: transparent; -fx-background-color: transparent;");
+        screen.setStyle("-fx-font-size: 25px;");
         name.setText("Welcome " + Main.currentUser.name + " " + Main.currentUser.surname + "!");
         GridPane grid = new GridPane();
         grid.setPrefHeight(520); // Set the preferred height of the GridPane
-        double gap = 600 / (cols * 4 - 1);
+        double gap = 580 / (cols * 4 - 1);
         double buttonSize = gap * 3;
         double gap2 = (520 - buttonSize * rows) / (rows - 1);
-        grid.setPrefWidth(600 + buttonSize + gap);
+        grid.setPrefWidth(580 + buttonSize + gap);
 
         grid.setHgap(gap);
         grid.setVgap(gap2);
@@ -86,17 +97,20 @@ public class seatSelection {
             Label seatLabel1 = new Label(rowChar + "");
             grid.add(seatLabel1, 0, row);
 
+
             seatLabel1.setPrefWidth(buttonSize);
-            seatLabel1.setAlignment(Pos.CENTER);
             seatLabel1.setPrefHeight(buttonSize);
             seatLabel1.setFont(Font.font(buttonSize / 3));
+            seatLabel1.setStyle(String.format("-fx-font-size: %f", buttonSize / 3));
+            seatLabel1.getStyleClass().add("no-hover");
+            seatLabel1.setAlignment(Pos.CENTER);
             for (int col = 1; col < cols+1; col++) {
                 Button seatButton = new Button();
                 Image seatImage = new Image("photos/chair_sold.png"); // Replace with your image path
                 ImageView imageView = new ImageView(seatImage);
                 imageView.setFitWidth(buttonSize);
                 imageView.setFitHeight(buttonSize);
-                seatButton.setStyle("-fx-background-color: transparent; -fx-border-width: 500;");
+                seatButton.setStyle("-fx-background-color: transparent; -fx-border-width: 500; -fx-padding: 0");
 
                 seatButton.setGraphic(imageView);
                 seatButton.setPadding(Insets.EMPTY);
@@ -112,12 +126,12 @@ public class seatSelection {
                 seatStack.setPrefHeight(buttonSize);
                 grid.add(seatStack, col, row);
 
-                grid.setLayoutX(225 - buttonSize - gap);
+                grid.setLayoutX(215 - buttonSize - gap);
                 grid.setLayoutY(30);
                 String seatName = rowChar + "" + String.valueOf(col);
                 String seat = String.valueOf(row) + "" + String.valueOf(col);
                 if(selectedSeats.contains(seatName)){
-                    seatButton.setStyle("-fx-background-color: red;");
+                    seatButton.setStyle("-fx-background-color: red; -fx-border-width: 500; -fx-padding: 0");
                 }
                 if(!soldSeats.contains(seatName)) {
                     seatImage = new Image("photos/chair.png");
@@ -129,12 +143,12 @@ public class seatSelection {
                         String style = seatButton.getStyle();
 
                         if (style.contains("red")) {
-                            seatButton.setStyle("-fx-background-color: transparent;");
+                            seatButton.setStyle("-fx-background-color: transparent; -fx-border-width: 500; -fx-padding: 0");
                             selectedSeats.remove(seatName);
                             secondController.updateSeats(seat,buttonSize,0);
                         }
                         else {
-                            seatButton.setStyle("-fx-background-color: red;");
+                            seatButton.setStyle("-fx-background-color: red; -fx-border-width: 500; -fx-padding: 0");
                             selectedSeats.add(seatName);
                             secondController.updateSeats(seat,buttonSize,1);
                         }
@@ -251,12 +265,8 @@ public class seatSelection {
             selectedSeats = new ArrayList<>();
         }
         else{
-            Label warningMessage = new Label("Please select at least one seat!");
             warningMessage.setStyle("-fx-text-fill: red;");
-            warningMessage.setFont(Font.font(15));
-            warningMessage.setLayoutX(805);
-            warningMessage.setLayoutY(555);
-            pane.getChildren().add(warningMessage);
+            warningMessage.getStyleClass().add("no-hover");
         }
     }
 }

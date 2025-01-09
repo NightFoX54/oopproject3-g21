@@ -34,8 +34,11 @@ public class CustomerSearch {
 
     public void showMovies(String name, String genre, String summary, String posterLocation){
         Label titleLabel = new Label("Title: " + name);
+        titleLabel.getStyleClass().add("no-hover");
         Label genreLabel = new Label("Genre: " + genre);
+        genreLabel.getStyleClass().add("no-hover");
         Label summaryLabel = new Label("Summary: " + summary);
+        summaryLabel.getStyleClass().add("no-hover");
         Image image = new Image(CustomerSearch.class.getResourceAsStream(posterLocation));
         VBox movieBox = new VBox();
         movieBox.setSpacing(5); // Space between the image and the title
