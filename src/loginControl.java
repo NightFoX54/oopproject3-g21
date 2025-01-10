@@ -29,8 +29,15 @@ public class loginControl {
         String password = this.password.getText();
         boolean logged = login.login(username,password);
         if(logged){
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(("sinema.fxml")));
-            root = FXMLLoader.load(getClass().getResource("sinema.fxml"));
+            FXMLLoader loader = null;
+            if(Main.currentUser.role.equals("manager")){
+                loader = new FXMLLoader(getClass().getResource(("manager.fxml")));
+            }
+            else if(Main.currentUser.role.equals("cashier")){
+                loader = new FXMLLoader(getClass().getResource(("sinema.fxml")));
+            }
+
+            root = loader.load();
             stage = (Stage)((Node)event.getSource()).getScene().getWindow();
             scene = new Scene(root);
             stage.setScene(scene);
@@ -39,6 +46,8 @@ public class loginControl {
         }
         else{
             warning.setText("Incorrect Username or Password! Try again!");
+            warning.setStyle("-fx-text-fill: red");
+            warning.getStyleClass().add("no-hover");
         }
     }
 }

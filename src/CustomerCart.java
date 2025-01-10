@@ -12,7 +12,13 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class CustomerCart {
@@ -88,19 +94,6 @@ public class CustomerCart {
 
     }
 
-    public void addPaymentButton(){
-        Button payButton = new Button("Complete the Payment");
-        payButton.setAlignment(Pos.CENTER);
-        payButton.setOnAction(e -> {
-            ageConfirmation.deneme = 1;
-            try {
-                ageConfirmation.deneme();
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
-            }
-        });
-        agePane.getChildren().add(payButton);
-    }
 
     public void updateExtras(ArrayList<extrasInfo> soldExtras){
         extrasBox.getChildren().clear();
@@ -108,8 +101,7 @@ public class CustomerCart {
         for(extrasInfo extra : soldExtras){
             HBox extras = new HBox();
             extras.setSpacing(10);
-            Image extrasImage = new Image(getClass().getResourceAsStream(extra.extrasImage));
-            ImageView extrasView = new ImageView(extrasImage);
+            ImageView extrasView = new ImageView(extra.extrasImage);
             extrasView.setFitWidth(50); // Set width for the poster
             extrasView.setFitHeight(50);
             extrasView.setPreserveRatio(true);
@@ -134,7 +126,7 @@ public class CustomerCart {
         totalPrice.setText("Total Price: " + price);
     }
 
-    public void showMovie(String movieName, String hallName, String sessionDate, String sessionTime, String posterPath) {
+    public void showMovie(String movieName, String hallName, String sessionDate, String sessionTime, Image image) {
         Label titleLabel = new Label("Title: " + movieName);
         titleLabel.getStyleClass().add("no-hover");
         Label hallLabel = new Label("Hall: " + hallName);
@@ -143,7 +135,6 @@ public class CustomerCart {
         dateLabel.getStyleClass().add("no-hover");
         Label timeLabel = new Label("Time: " + sessionTime);
         timeLabel.getStyleClass().add("no-hover");
-        Image image = new Image(getClass().getResourceAsStream(posterPath));
         VBox movieBox = new VBox();
         movieBox.setSpacing(5); // Space between the image and the title
 

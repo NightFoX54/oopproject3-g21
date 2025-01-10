@@ -1,3 +1,4 @@
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -91,6 +92,9 @@ public class seatSelection {
         grid.setHgap(gap);
         grid.setVgap(gap2);
 
+        Image soldSeatImage = new Image("photos/chair_sold.png");
+        Image seatImage = new Image("photos/chair.png");
+
         Set<String> soldSeats = soldSeats();
         char rowChar = (char) ('A' + rows - 1);
         for (int row = 0; row < rows; row++) {
@@ -106,11 +110,11 @@ public class seatSelection {
             seatLabel1.setAlignment(Pos.CENTER);
             for (int col = 1; col < cols+1; col++) {
                 Button seatButton = new Button();
-                Image seatImage = new Image("photos/chair_sold.png"); // Replace with your image path
-                ImageView imageView = new ImageView(seatImage);
+                ImageView imageView = new ImageView(soldSeatImage);
                 imageView.setFitWidth(buttonSize);
                 imageView.setFitHeight(buttonSize);
-                seatButton.setStyle("-fx-background-color: transparent; -fx-border-width: 500; -fx-padding: 0");
+                seatButton.setStyle("-fx-background-color: transparent; -fx-border-width: 500; -fx-padding: 0; -fx-scale-x: 1; -fx-scale-y: 1; -fx-transition: none; -fx-cursor: default;");
+                seatButton.setDisable(true);
 
                 seatButton.setGraphic(imageView);
                 seatButton.setPadding(Insets.EMPTY);
@@ -130,11 +134,11 @@ public class seatSelection {
                 grid.setLayoutY(30);
                 String seatName = rowChar + "" + String.valueOf(col);
                 String seat = String.valueOf(row) + "" + String.valueOf(col);
-                if(selectedSeats.contains(seatName)){
-                    seatButton.setStyle("-fx-background-color: red; -fx-border-width: 500; -fx-padding: 0");
-                }
+
                 if(!soldSeats.contains(seatName)) {
-                    seatImage = new Image("photos/chair.png");
+                    seatButton.setStyle("-fx-background-color: transparent; -fx-border-width: 500; -fx-padding: 0");
+                    seatButton.setDisable(false);
+
                     imageView = new ImageView(seatImage);
                     seatButton.setGraphic(imageView);
                     imageView.setFitWidth(buttonSize);
@@ -153,6 +157,9 @@ public class seatSelection {
                             secondController.updateSeats(seat,buttonSize,1);
                         }
                     });
+                }
+                if(selectedSeats.contains(seatName)){
+                    seatButton.setStyle("-fx-background-color: red; -fx-border-width: 500; -fx-padding: 0");
                 }
             }
             rowChar--;

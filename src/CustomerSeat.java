@@ -54,6 +54,8 @@ public class CustomerSeat {
         grid.setVgap(gap2);
 
         char rowChar = (char) ('A' + rows - 1);
+        Image soldSeatImage = new Image("photos/chair_sold.png", buttonSize, buttonSize, false, true);
+        Image seatImage = new Image("photos/chair.png", buttonSize, buttonSize, false, true);
         for (int row = 0; row < rows; row++) {
             Label seatLabel1 = new Label(rowChar + "");
             grid.add(seatLabel1, 0, row);
@@ -66,8 +68,7 @@ public class CustomerSeat {
             seatLabel1.getStyleClass().add("no-hover");
             for (int col = 1; col < cols+1; col++) {
                 Button seatButton = new Button();
-                Image seatImage = new Image("photos/chair_sold.png"); // Replace with your image path
-                ImageView imageView = new ImageView(seatImage);
+                ImageView imageView = new ImageView(soldSeatImage);
                 imageView.setFitWidth(buttonSize);
                 imageView.setFitHeight(buttonSize);
                 seatButton.setStyle("-fx-background-color: transparent; -fx-border-width: 500; -fx-padding: 0; -fx-scale-x: 1; -fx-scale-y: 1; -fx-transition: none; -fx-cursor: default;");
@@ -93,7 +94,6 @@ public class CustomerSeat {
                     seatButton.setStyle("-fx-background-color: red; -fx-border-width: 500; -fx-padding: 0; -fx-scale-x: 1; -fx-scale-y: 1; -fx-transition: none; -fx-cursor: default;");
                 }
                 if(!soldSeats.contains(seatName)) {
-                    seatImage = new Image("photos/chair.png");
                     imageView = new ImageView(seatImage);
                     seatButton.setGraphic(imageView);
                     imageView.setFitWidth(buttonSize);

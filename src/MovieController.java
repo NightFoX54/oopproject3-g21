@@ -1,4 +1,5 @@
 import com.mysql.cj.protocol.Resultset;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -18,8 +19,11 @@ import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class MovieController {
+    
+    ArrayList<movies> movieList = new ArrayList<>();
 
     @FXML
     private TextField nameField; // Search bar for movie names
@@ -39,6 +43,7 @@ public class MovieController {
 
     @FXML
     public void initialize() throws IOException {
+        movieList = new ArrayList<>();
         if(secondController == null) {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("customerSearch.fxml"));
             Parent root = loader.load();
@@ -51,6 +56,7 @@ public class MovieController {
             secondController.stage.setY(50);
             secondController.stage.show();
         }
+        loadMovies();
         displayMovies("",""); // Display all movies initially
 
 
@@ -59,8 +65,8 @@ public class MovieController {
 
     @FXML
     private void Search() {
-        String name = nameField.getText().toLowerCase();
-        String genre = genreField.getText().toLowerCase();
+        String name = nameField.getText().toLowerCase(Locale.ENGLISH);
+        String genre = genreField.getText().toLowerCase(Locale.ENGLISH);
 
         displayMovies(genre,name);
     }
@@ -88,84 +94,38 @@ public class MovieController {
         secondController = null;
     }
 
+    private void loadMovies() {
 
-    private void displayMovies(String genre, String name) {
-        movieTilePane.getChildren().clear();
-        secondController.clearMovies();
-        if(genre.length() == 0 && name.length() == 0) {
-            String query = "SELECT id, movieName, genre, summary, posterLocation FROM movies";
-            try (Connection connection = Main.getConnection(); Statement statement = connection.createStatement(); ResultSet res = statement.executeQuery(query);) {
-                addMovieBox(res);
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-        }
-        else{
-            String query = "SELECT id, movieName, genre, summary, posterLocation FROM movies WHERE movieName LIKE ? AND genre LIKE ?";
-            try (Connection connection = Main.getConnection(); PreparedStatement statement = connection.prepareStatement(query);) {
-                statement.setString(1, "%"+name+"%");
-                statement.setString(2, "%"+genre+"%");
-                try(ResultSet res = statement.executeQuery()) {
-                    addMovieBox(res);
-                }
+        String query = "SELECT id, movieName, genre, summary, posterLocation FROM movies";
+        try (Connection connection = Main.getConnection(); Statement statement = connection.createStatement(); ResultSet res = statement.executeQuery(query);) {
+            movieList.clear();
 
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-        }
-    }
-
-    private void addMovieBox(ResultSet res){
-        try {
             while (res.next()) {
-                String name = res.getString(2);
-                String genre = res.getString(3);
-                String summary = res.getString(4);
-                String posterLocation = res.getString(5);
-                String id = res.getString(1);
-                secondController.showMovies(name, genre, summary, posterLocation);
-                Label titleLabel = new Label("Title: " + name);
-                titleLabel.getStyleClass().add("no-hover");
-                Label genreLabel = new Label("Genre: " + genre);
-                genreLabel.getStyleClass().add("no-hover");
-                Label summaryLabel = new Label("Summary: " + summary);
-                summaryLabel.getStyleClass().add("no-hover");
-                Image image = new Image(getClass().getResourceAsStream(posterLocation));
-                VBox movieBox = new VBox();
-                movieBox.setSpacing(5); // Space between the image and the title
+                Image image = new Image(res.getString(5));
+                movieList.add(new movies(res.getString(2), res.getString(3),image, res.getString(5), res.getInt(1), res.getString(4), 300, 400, true));
 
-                // Load the movie poster image
-                ImageView imageView = new ImageView(image);
-                imageView.setFitWidth(300); // Set width for the poster
-                imageView.setFitHeight(400);
-                imageView.setPreserveRatio(true); // Maintain the aspect ratio
-
-                // Create a Label for the movie title
-                titleLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
-                genreLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
-                summaryLabel.setStyle("-fx-font-size: 14px;");
-                summaryLabel.setWrapText(true);
-                Button addToCartButton = new Button("Select Session");
-                addToCartButton.setOnAction(event -> {
-                    try {
-                        secondController.goToSessions();
-                        addToCart(event,name,genre,summary,posterLocation,Integer.parseInt(id));
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                });
-
-                // Add the image and title to the VBox
-                movieBox.getChildren().addAll(imageView, titleLabel, genreLabel, summaryLabel,addToCartButton);
-
-                // Add the VBox to the TilePane
-                movieTilePane.getChildren().add(movieBox);
+                secondController.movieList.add(new movies(res.getString(2), res.getString(3),image, res.getString(5), res.getInt(1), res.getString(4), 390, 510, false));
             }
-        }
-        catch (SQLException e) {
+        } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
+
+    private void displayMovies(String genre, String name) {
+        movieTilePane.getChildren().clear();
+        secondController.displayMovies(genre,name);
+        for(movies movie : movieList) {
+            if (genre.length() == 0 && name.length() == 0) {
+                movieTilePane.getChildren().add(movie.movieBox);
+            } else {
+                if(movie.movieName.toLowerCase(Locale.ENGLISH).contains(name.toLowerCase()) && movie.genre.toLowerCase(Locale.ENGLISH).contains(genre.toLowerCase())) {
+                    movieTilePane.getChildren().add(movie.movieBox);
+                }
+            }
+        }
+    }
+
+
 
     private void addToCart(ActionEvent e,String name, String genre, String summary, String posterLocation, int movieId) throws IOException {
         sessionChooser.movieName = name;
@@ -181,5 +141,53 @@ public class MovieController {
         stage.show();
     }
 
+    public class movies{
+        String movieName;
+        String genre;
+        VBox movieBox;
+
+        movies(String name, String genre, Image image, String posterLocation, int id, String summary, int width, int height, boolean button) {
+            this.movieName = name;
+            this.genre = genre;
+            Label titleLabel = new Label("Title: " + name);
+            titleLabel.getStyleClass().add("no-hover");
+            Label genreLabel = new Label("Genre: " + genre);
+            genreLabel.getStyleClass().add("no-hover");
+            Label summaryLabel = new Label("Summary: " + summary);
+            summaryLabel.getStyleClass().add("no-hover");
+            movieBox = new VBox();
+            movieBox.setSpacing(5); // Space between the image and the title
+
+            // Load the movie poster image
+            ImageView imageView = new ImageView(image);
+            imageView.setFitWidth(width); // Set width for the poster
+            imageView.setFitHeight(height);
+            imageView.setPreserveRatio(true); // Maintain the aspect ratio
+
+            // Create a Label for the movie title
+            titleLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
+            genreLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
+            summaryLabel.setStyle("-fx-font-size: 14px;");
+            summaryLabel.setWrapText(true);
+
+
+            // Add the image and title to the VBox
+            movieBox.getChildren().addAll(imageView, titleLabel, genreLabel, summaryLabel);
+            if(button) {
+                Button addToCartButton = new Button("Select Session");
+                addToCartButton.setOnAction(event -> {
+                    try {
+                        secondController.goToSessions();
+                        addToCart(event, name, genre, summary, posterLocation, id);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+                movieBox.getChildren().add(addToCartButton);
+            }
+        }
+    }
 }
+
+
 

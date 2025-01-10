@@ -15,8 +15,12 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Locale;
 
 public class CustomerSearch {
+
+    public ArrayList<MovieController.movies> movieList = new ArrayList<>();
 
     @FXML
     private TilePane TilePane;
@@ -32,36 +36,21 @@ public class CustomerSearch {
         TilePane.getChildren().clear();
     }
 
-    public void showMovies(String name, String genre, String summary, String posterLocation){
-        Label titleLabel = new Label("Title: " + name);
-        titleLabel.getStyleClass().add("no-hover");
-        Label genreLabel = new Label("Genre: " + genre);
-        genreLabel.getStyleClass().add("no-hover");
-        Label summaryLabel = new Label("Summary: " + summary);
-        summaryLabel.getStyleClass().add("no-hover");
-        Image image = new Image(CustomerSearch.class.getResourceAsStream(posterLocation));
-        VBox movieBox = new VBox();
-        movieBox.setSpacing(5); // Space between the image and the title
+    public void displayMovies(String genre, String name) {
+        TilePane.getChildren().clear();
+        clearMovies();
+        for(MovieController.movies movie : movieList) {
+            if (genre.length() == 0 && name.length() == 0) {
+                TilePane.getChildren().add(movie.movieBox);
 
-        // Load the movie poster image
-        ImageView imageView = new ImageView(image);
-        imageView.setFitWidth(390); // Set width for the poster
-        imageView.setFitHeight(510);
-        imageView.setPreserveRatio(true); // Maintain the aspect ratio
-
-        // Create a Label for the movie title
-        titleLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
-        genreLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
-        summaryLabel.setStyle("-fx-font-size: 14px;");
-        summaryLabel.setWrapText(true);
-
-        // Add the image and title to the VBox
-        movieBox.getChildren().addAll(imageView, titleLabel, genreLabel, summaryLabel);
-        movieBox.setPrefWidth(390);
-
-        // Add the VBox to the TilePane
-        this.TilePane.getChildren().add(movieBox);
+            } else {
+                if(movie.movieName.toLowerCase(Locale.ENGLISH).contains(name.toLowerCase()) && movie.genre.toLowerCase(Locale.ENGLISH).contains(genre.toLowerCase())) {
+                    TilePane.getChildren().add(movie.movieBox);
+                }
+            }
+        }
     }
+
 
     @FXML
     public void goToSessions() throws IOException {

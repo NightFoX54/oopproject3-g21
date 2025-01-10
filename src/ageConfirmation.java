@@ -19,6 +19,7 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.scene.image.ImageView;
 
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.*;
@@ -28,7 +29,6 @@ import java.util.Collections;
 import java.util.List;
 
 public class ageConfirmation {
-    public static int deneme = 0;
     public static ArrayList<String> selectedSeats = new ArrayList<String>();
     public static ArrayList<SeatInfo> seatsToSell;
     public static ArrayList<extrasInfo> soldExtras;
@@ -111,7 +111,7 @@ public class ageConfirmation {
         movieBox.getChildren().addAll(imageView, titleLabel, hallLabel, dateLabel, timeLabel);
         moviePane.getChildren().add(movieBox);
         if(secondController.moviePane.getChildren().isEmpty())
-            secondController.showMovie(movieName,hallName,sessionDate,sessionTime,posterPath);
+            secondController.showMovie(movieName,hallName,sessionDate,sessionTime,image);
         VBox mainBox = new VBox();
         for(String seat : selectedSeats) {
             Label seatLabel = new Label("Seat " + seat + " is selected for: ");
@@ -164,6 +164,7 @@ public class ageConfirmation {
                     Label confirmLabel;
                     if (ageValue < 18 || ageValue >= 60) {
                         confirmLabel = new Label(ageDiscount + "% discount!");
+                        confirmLabel.getStyleClass().add("no-hover");
                         confirmLabel.setFont(Font.font(15));
                         confirmLabel.setAlignment(Pos.CENTER);
                         total_tax += ticketPrice * ((double) ageDiscount /100) * ticketTax;
@@ -176,6 +177,7 @@ public class ageConfirmation {
                         secondController.updatePrice(totalString);
                     } else {
                         confirmLabel = new Label("No discount!");
+                        confirmLabel.getStyleClass().add("no-hover");
                         confirmLabel.setFont(Font.font(15));
                         confirmLabel.setAlignment(Pos.CENTER);
                         total_tax += ticketPrice * ticketTax;
@@ -238,11 +240,13 @@ public class ageConfirmation {
                     int extrasStock = res.getInt("stock");
                     int extrasPrice = res.getInt("price");
                     String extrasPhotoPath = res.getString("photopath");
-                    extrasInfo extra = new extrasInfo(extrasName, extrasPrice, 0,extrasStock, extrasPhotoPath);
+                    int extrasId = res.getInt("id");
+                    Image extrasImage = new Image(getClass().getResourceAsStream(extrasPhotoPath));
+                    extrasInfo extra = new extrasInfo(extrasName, extrasPrice, 0,extrasStock, extrasImage,extrasId);
                     soldExtras.add(extra);
                     HBox extras = new HBox();
                     extras.setSpacing(10);
-                    Image extrasImage = new Image(getClass().getResourceAsStream(extrasPhotoPath));
+
                     ImageView extrasView = new ImageView(extrasImage);
                     extrasView.setFitWidth(50); // Set width for the poster
                     extrasView.setFitHeight(50);
@@ -309,7 +313,7 @@ public class ageConfirmation {
             paymentLabel.setStyle("-fx-text-fill: red");
             paymentLabel.setText("Waiting For The Payment");
             paymentLabel.setLayoutX(489);
-            secondController.addPaymentButton();
+            addPaymentButton();
             createTicket();
         }
         else{
@@ -319,15 +323,6 @@ public class ageConfirmation {
         }
     }
 
-    public static void deneme() throws IOException {
-        /*Parent root = FXMLLoader.load(ageConfirmation.class.getResource("passChange.fxml"));
-        Stage stage = (Stage) spinners.get(0).getScene().getWindow();
-        Scene scene = new Scene(root);
-        stage.setScene(scene);
-        stage.show();
-        passChangeCont.prevPage = "ageConfirmation.fxml";
-        passChangeCont.stage2 = secondController.stage;*/
-    }
 
     @FXML
     private void changePassword(ActionEvent e) throws IOException {
@@ -393,6 +388,69 @@ public class ageConfirmation {
     private void createInvoice(){
 
     }
+
+    public void addPaymentButton(){
+        Button payButton = new Button("Approve the Payment");
+        payButton.setAlignment(Pos.CENTER);
+        payButton.setOnAction(e -> {
+            String query1 = "INSERT INTO completed_sells (ticket_count, extras_count, total_price, total_tax, ticket, invoice) VALUES (?,?,?,?,?,?)";
+            String query2 = "INSERT INTO sold_seats (schedule_id, seat_row, seat_col, customer_name, customer_age, sell_id) VALUES (?,?,?,?,?,?)";
+            String query3 = "INSERT INTO sold_extras (extras_id, extras_count, completed_sell_id) VALUES (?,?,?)";
+            try(Connection connection = Main.getConnection();
+                PreparedStatement preparedStatement1 = connection.prepareStatement(query1, PreparedStatement.RETURN_GENERATED_KEYS);
+                PreparedStatement preparedStatement2 = connection.prepareStatement(query2);
+                PreparedStatement preparedStatement3 = connection.prepareStatement(query3);
+                FileInputStream invoice = new FileInputStream("invoice.pdf");
+                FileInputStream ticket = new FileInputStream("ticket.pdf");
+            ) {
+                preparedStatement1.setInt(1, seatsToSell.size());
+                int extras_count = 0;
+                for(extrasInfo extra : ageConfirmation.soldExtras){
+                    extras_count += extra.extrasCount;
+                }
+                preparedStatement1.setInt(2, extras_count);
+                preparedStatement1.setDouble(3, Double.parseDouble(totalPrice.getText().substring(13).replace(",", ".")));
+                preparedStatement1.setDouble(4, ageConfirmation.total_tax);
+                preparedStatement1.setBlob(5, ticket);
+                preparedStatement1.setBlob(6, invoice);
+                int sell_id = 0;
+                preparedStatement1.executeUpdate();
+                try(ResultSet resultSet = preparedStatement1.getGeneratedKeys()){
+                    if(resultSet.next()){
+                        sell_id = resultSet.getInt(1);
+                    }
+                }
+                for(SeatInfo seat : ageConfirmation.seatsToSell){
+                    preparedStatement2.setInt(1, seatSelection.session_id);
+                    preparedStatement2.setString(2, seat.seatName.substring(0,1));
+                    preparedStatement2.setString(3, seat.seatName.substring(1));
+                    preparedStatement2.setString(4, seat.customerName);
+                    preparedStatement2.setInt(5, seat.customerAge);
+                    preparedStatement2.setInt(6,sell_id);
+                    preparedStatement2.addBatch();
+                }
+                preparedStatement2.executeBatch();
+
+                for(extrasInfo extras : ageConfirmation.soldExtras){
+                    if(extras.extrasCount != 0) {
+                        preparedStatement3.setInt(1, extras.extras_id);
+                        preparedStatement3.setInt(2, extras.extrasCount);
+                        preparedStatement3.setInt(3, sell_id);
+                        preparedStatement3.addBatch();
+                    }
+                }
+                preparedStatement3.executeBatch();
+
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            } catch (FileNotFoundException ex) {
+                throw new RuntimeException(ex);
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
+        agePane.getChildren().add(payButton);
+    }
 }
 
 
@@ -414,13 +472,15 @@ class extrasInfo{
     int extrasPrice;
     int extrasCount;
     int extrasStock;
-    String extrasImage;
+    Image extrasImage;
+    int extras_id;
 
-    public extrasInfo(String extrasName, int extrasPrice, int extrasCount, int extrasStock, String extrasImage) {
+    public extrasInfo(String extrasName, int extrasPrice, int extrasCount, int extrasStock, Image extrasImage, int extras_id) {
         this.extrasName = extrasName;
         this.extrasPrice = extrasPrice;
         this.extrasCount = extrasCount;
         this.extrasStock = extrasStock;
         this.extrasImage = extrasImage;
+        this.extras_id = extras_id;
     }
 }

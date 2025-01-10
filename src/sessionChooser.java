@@ -263,11 +263,13 @@ public class sessionChooser {
         }
 
         sessionTable.setPrefWidth(1190);
+        sessionTable.setPrefHeight(465);
         // Add all columns
         sessionTable.getColumns().addAll(hall_names, date_col, time_col, capacity_col, seats_col);
         if (includeButton) {
             sessionTable.getColumns().add(button_col);
             sessionTable.setPrefWidth(1020);
+            sessionTable.setPrefHeight(455);
         }
 
 
