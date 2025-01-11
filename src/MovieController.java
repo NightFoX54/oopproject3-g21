@@ -26,13 +26,13 @@ public class MovieController {
     ArrayList<movies> movieList = new ArrayList<>();
 
     @FXML
-    private TextField nameField; // Search bar for movie names
+    private TextField nameField;
 
     @FXML
     private TextField genreField;
 
     @FXML
-    private TilePane movieTilePane; // Container for displaying movie posters
+    private TilePane movieTilePane;
 
 
     @FXML
@@ -57,7 +57,7 @@ public class MovieController {
             secondController.stage.show();
         }
         loadMovies();
-        displayMovies("",""); // Display all movies initially
+        displayMovies("","");
 
 
         name.setText("Welcome " + Main.currentUser.name + " " + Main.currentUser.surname + "!");
@@ -156,22 +156,22 @@ public class MovieController {
             Label summaryLabel = new Label("Summary: " + summary);
             summaryLabel.getStyleClass().add("no-hover");
             movieBox = new VBox();
-            movieBox.setSpacing(5); // Space between the image and the title
+            movieBox.setSpacing(5);
 
-            // Load the movie poster image
+
             ImageView imageView = new ImageView(image);
-            imageView.setFitWidth(width); // Set width for the poster
+            imageView.setFitWidth(width);
             imageView.setFitHeight(height);
-            imageView.setPreserveRatio(true); // Maintain the aspect ratio
+            imageView.setPreserveRatio(true);
 
-            // Create a Label for the movie title
+
             titleLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
             genreLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
             summaryLabel.setStyle("-fx-font-size: 14px;");
             summaryLabel.setWrapText(true);
 
 
-            // Add the image and title to the VBox
+
             movieBox.getChildren().addAll(imageView, titleLabel, genreLabel, summaryLabel);
             if(button) {
                 Button addToCartButton = new Button("Select Session");

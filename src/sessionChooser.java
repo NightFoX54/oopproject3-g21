@@ -127,28 +127,28 @@ public class sessionChooser {
         VBox textBox = new VBox();
         textBox.setSpacing(5);
         HBox movieBox = new HBox();
-        movieBox.setSpacing(5); // Space between the image and the title
+        movieBox.setSpacing(5);
 
-        // Load the movie poster image
+
         ImageView imageView = new ImageView(image);
-        imageView.setFitWidth(210); // Set width for the poster
+        imageView.setFitWidth(210);
         imageView.setFitHeight(280);
-        imageView.setPreserveRatio(true); // Maintain the aspect ratio
+        imageView.setPreserveRatio(true);
 
-        // Create a Label for the movie title
+
         titleLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
         genreLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
         summaryLabel.setStyle("-fx-font-size: 14px;");
         summaryLabel.setWrapText(true);
 
 
-        // Add the image and title to the VBox
+
         textBox.getChildren().addAll(titleLabel, genreLabel, summaryLabel);
         movieBox.getChildren().addAll(imageView,textBox);
         movieBox.setPrefWidth(1020);
         movieBox.setPrefHeight(280);
 
-        // Add the VBox to the TilePane
+
         sessionFlowPane.getChildren().add(movieBox);
         secondController.showMovie(movieName,genre,summary,posterPath);
         showSessions();
@@ -215,7 +215,7 @@ public class sessionChooser {
     private TableView<session> createSessionTable(boolean includeButton) {
         TableView<session> sessionTable = new TableView<>();
 
-        // Create the columns
+
         TableColumn<session, String> hall_names = new TableColumn<>("Hall Name");
         hall_names.setCellValueFactory(cellData -> cellData.getValue().hall_name);
         hall_names.setPrefWidth(232);
@@ -236,7 +236,7 @@ public class sessionChooser {
         seats_col.setCellValueFactory(cellData -> cellData.getValue().available_seats);
         seats_col.setPrefWidth(232);
 
-        // Add the button column only if the flag is true
+
         TableColumn<session, Button> button_col = null;
         if (includeButton) {
             hall_names.setPrefWidth(165);
@@ -264,7 +264,7 @@ public class sessionChooser {
 
         sessionTable.setPrefWidth(1190);
         sessionTable.setPrefHeight(465);
-        // Add all columns
+
         sessionTable.getColumns().addAll(hall_names, date_col, time_col, capacity_col, seats_col);
         if (includeButton) {
             sessionTable.getColumns().add(button_col);
@@ -273,7 +273,7 @@ public class sessionChooser {
         }
 
 
-        // Center align columns
+
         hall_names.setCellFactory(createCenterAlignedCellFactory());
         date_col.setCellFactory(createCenterAlignedCellFactory());
         time_col.setCellFactory(createCenterAlignedCellFactory());

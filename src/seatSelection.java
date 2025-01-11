@@ -61,11 +61,11 @@ public class seatSelection {
         timeLabel.getStyleClass().add("no-hover");
         Image image = new Image(getClass().getResourceAsStream(posterPath));
         movieBox = new VBox();
-        movieBox.setSpacing(5); // Space between the image and the title
+        movieBox.setSpacing(5);
 
-        // Load the movie poster image
+
         ImageView imageView = new ImageView(image);
-        imageView.setFitWidth(200); // Set width for the poster
+        imageView.setFitWidth(200);
         imageView.setPreserveRatio(true);
         movieBox.getChildren().addAll(imageView, titleLabel, hallLabel, dateLabel, timeLabel);
         movieTile.getChildren().add(movieBox);
@@ -83,7 +83,7 @@ public class seatSelection {
         screen.setStyle("-fx-font-size: 25px;");
         name.setText("Welcome " + Main.currentUser.name + " " + Main.currentUser.surname + "!");
         GridPane grid = new GridPane();
-        grid.setPrefHeight(520); // Set the preferred height of the GridPane
+        grid.setPrefHeight(520);
         double gap = 580 / (cols * 4 - 1);
         double buttonSize = gap * 3;
         double gap2 = (520 - buttonSize * rows) / (rows - 1);

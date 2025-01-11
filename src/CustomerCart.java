@@ -102,7 +102,7 @@ public class CustomerCart {
             HBox extras = new HBox();
             extras.setSpacing(10);
             ImageView extrasView = new ImageView(extra.extrasImage);
-            extrasView.setFitWidth(50); // Set width for the poster
+            extrasView.setFitWidth(50);
             extrasView.setFitHeight(50);
             extrasView.setPreserveRatio(true);
             Label priceLabel = new Label("Price: " + extra.extrasPrice + "₺ + tax");
@@ -136,11 +136,11 @@ public class CustomerCart {
         Label timeLabel = new Label("Time: " + sessionTime);
         timeLabel.getStyleClass().add("no-hover");
         VBox movieBox = new VBox();
-        movieBox.setSpacing(5); // Space between the image and the title
+        movieBox.setSpacing(5);
 
-        // Load the movie poster image
+
         ImageView imageView = new ImageView(image);
-        imageView.setFitWidth(200); // Set width for the poster
+        imageView.setFitWidth(200);
         imageView.setPreserveRatio(true);
         movieBox.getChildren().addAll(imageView, titleLabel, hallLabel, dateLabel, timeLabel);
         moviePane.getChildren().add(movieBox);
@@ -180,5 +180,27 @@ public class CustomerCart {
         stage.show();
         secondController.stage = stage;
         seatSelection.secondController = secondController;
+    }
+
+    public void displayTicket() throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("ticket_invoice_display.fxml"));
+        Parent root = loader.load();
+        TicketInvoiceDisplay secondController = loader.getController();
+        stage.setTitle("Group21 CinemaCenter");
+        stage.setScene(new Scene(root));
+        stage.show();
+        secondController.stage = stage;
+        ageConfirmation.thirdController = secondController;
+    }
+
+    public void finishSession() throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("customerSearch.fxml"));
+        Parent root = loader.load();
+        CustomerSearch secondController = loader.getController();
+        stage.setTitle("Group21 CinemaCenter");
+        stage.setScene(new Scene(root));
+        stage.show();
+        secondController.stage = stage;
+        MovieController.secondController = secondController;
     }
 }

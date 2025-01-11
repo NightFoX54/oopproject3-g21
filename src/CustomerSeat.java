@@ -44,7 +44,7 @@ public class CustomerSeat {
 
 
     public void showSeats(int rows, int cols, Set<String> soldSeats, ArrayList<String> selectedSeats) {
-        grid.setPrefHeight(520); // Set the preferred height of the GridPane
+        grid.setPrefHeight(520);
         double gap = 600 / (cols * 4 - 1);
         double buttonSize = gap * 3;
         double gap2 = (520 - buttonSize * rows) / (rows - 1);
@@ -110,7 +110,7 @@ public class CustomerSeat {
         int row = seatName.charAt(0) - '0';
         int col = seatName.charAt(1) - '0';
         Button seatButton = new Button();
-        Image seatImage = new Image("photos/chair.png"); // Replace with your image path
+        Image seatImage = new Image("photos/chair.png");
         ImageView imageView = new ImageView(seatImage);
         imageView.setFitWidth(buttonSize);
         imageView.setFitHeight(buttonSize);
@@ -135,11 +135,10 @@ public class CustomerSeat {
             Integer colIndex = GridPane.getColumnIndex(node);
             Integer rowIndex = GridPane.getRowIndex(node);
 
-            // Default to 0 if column or row indices are null (happens for elements without set indices)
             if (colIndex == null) colIndex = 0;
             if (rowIndex == null) rowIndex = 0;
 
-            // Check if the current node matches the specified column and row
+
             if (colIndex == col && rowIndex == row) {
                 targetNode = node;
                 break;
@@ -163,11 +162,11 @@ public class CustomerSeat {
         timeLabel.getStyleClass().add("no-hover");
         Image image = new Image(getClass().getResourceAsStream(posterPath));
         VBox movieBox = new VBox();
-        movieBox.setSpacing(5); // Space between the image and the title
+        movieBox.setSpacing(5);
 
-        // Load the movie poster image
+
         ImageView imageView = new ImageView(image);
-        imageView.setFitWidth(200); // Set width for the poster
+        imageView.setFitWidth(200);
         imageView.setPreserveRatio(true);
         movieBox.getChildren().addAll(imageView, titleLabel, hallLabel, dateLabel, timeLabel);
         movieTile.getChildren().add(movieBox);

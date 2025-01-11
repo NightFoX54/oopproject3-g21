@@ -33,28 +33,28 @@ public class CustomerSession {
         VBox textBox = new VBox();
         textBox.setSpacing(5);
         HBox movieBox = new HBox();
-        movieBox.setSpacing(5); // Space between the image and the title
+        movieBox.setSpacing(5);
 
-        // Load the movie poster image
+
         ImageView imageView = new ImageView(image);
-        imageView.setFitWidth(240); // Set width for the poster
+        imageView.setFitWidth(240);
         imageView.setFitHeight(320);
-        imageView.setPreserveRatio(true); // Maintain the aspect ratio
+        imageView.setPreserveRatio(true);
 
-        // Create a Label for the movie title
+
         titleLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
         genreLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
         summaryLabel.setStyle("-fx-font-size: 14px;");
         summaryLabel.setWrapText(true);
 
 
-        // Add the image and title to the VBox
+
         textBox.getChildren().addAll(titleLabel, genreLabel, summaryLabel);
         movieBox.getChildren().addAll(imageView,textBox);
         movieBox.setPrefWidth(1150);
         movieBox.setPrefHeight(320);
 
-        // Add the VBox to the TilePane
+
         sessionFlowPane.getChildren().add(movieBox);
     }
 
