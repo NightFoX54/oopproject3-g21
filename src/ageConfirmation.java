@@ -619,7 +619,7 @@ public class ageConfirmation {
         Button payButton = new Button("Approve the Payment");
         payButton.setOnAction(e -> {
             Collections.sort(selectedSeats);
-            String query1 = "INSERT INTO completed_sells (ticket_count, extras_count, total_price, total_tax, date) VALUES (?,?,?,?,?)";
+            String query1 = "INSERT INTO completed_sells (ticket_count, extras_count, total_price, total_tax, sell_date) VALUES (?,?,?,?,?)";
             String query2 = "INSERT INTO sold_seats (schedule_id, seat_row, seat_col, customer_name, customer_age, sell_id) VALUES (?,?,?,?,?,?)";
             String query3 = "INSERT INTO sold_extras (extras_id, extras_count, completed_sell_id) VALUES (?,?,?)";
             String query4 = "UPDATE completed_sells SET ticket = ?, invoice = ? WHERE sell_id = ?";

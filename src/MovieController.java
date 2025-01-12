@@ -1,5 +1,3 @@
-import com.mysql.cj.protocol.Resultset;
-import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -8,9 +6,11 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.Pagination;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -18,12 +18,14 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 
 public class MovieController {
-    
+
+    @FXML
+    public AnchorPane anchorPane;
     ArrayList<movies> movieList = new ArrayList<>();
+    ArrayList<movies> subList = new ArrayList<>();
 
     @FXML
     private TextField nameField;
@@ -40,9 +42,10 @@ public class MovieController {
 
     public static CustomerSearch secondController;
 
-
+    public Pagination pagination;
     @FXML
     public void initialize() throws IOException {
+
         movieList = new ArrayList<>();
         if(secondController == null) {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("customerSearch.fxml"));
@@ -57,18 +60,53 @@ public class MovieController {
             secondController.stage.show();
         }
         loadMovies();
-        displayMovies("","");
+        searchMovies("","");
 
-
+        pagination = new Pagination();
+        int itemsPerPage = 3;
+        pagination.setPageCount((int) Math.ceil(subList.size() / (double) itemsPerPage));
+        int pageCount = pagination.getPageCount();
+        pagination.setCurrentPageIndex(0);
+        pagination.setMaxPageIndicatorCount(pageCount);
+        pagination.currentPageIndexProperty().addListener((observable, oldValue, newValue) -> {
+            updateTableData(newValue.intValue(), itemsPerPage);
+            secondController.updateTableData(newValue.intValue(), 3);
+        });
+        pagination.setLayoutX(14);
+        pagination.setLayoutY(700);
+        anchorPane.getChildren().add(pagination);
+        updateTableData(0,3);
         name.setText("Welcome " + Main.currentUser.name + " " + Main.currentUser.surname + "!");
+    }
+
+    private void updateTableData(int pageIndex, int itemsPerPage) {
+        secondController.updateTableData(pageIndex, itemsPerPage);
+        movieTilePane.getChildren().clear();
+        int i = 0;
+        int fromIndex = pageIndex * itemsPerPage;
+        int toIndex = fromIndex + itemsPerPage;
+        for(movies movie : subList) {
+            if(i >= fromIndex && i < toIndex) {
+                movieTilePane.getChildren().add(movie.movieBox);
+            }
+            i++;
+        }
     }
 
     @FXML
     private void Search() {
         String name = nameField.getText().toLowerCase(Locale.ENGLISH);
         String genre = genreField.getText().toLowerCase(Locale.ENGLISH);
-
-        displayMovies(genre,name);
+        secondController.searchMovies(genre,name);
+        searchMovies(genre,name);
+        pagination.setCurrentPageIndex(0);
+        pagination.setPageCount((int) Math.ceil(subList.size() / (double) 3));
+        int pageCount = pagination.getPageCount();
+        pagination.setMaxPageIndicatorCount(pageCount);
+        pagination.currentPageIndexProperty().addListener((observable, oldValue, newValue) -> {
+            updateTableData(newValue.intValue(), 3);
+        });
+        updateTableData(0,3);
     }
 
     @FXML
@@ -111,19 +149,21 @@ public class MovieController {
         }
     }
 
-    private void displayMovies(String genre, String name) {
+    private void searchMovies(String genre, String name) {
         movieTilePane.getChildren().clear();
-        secondController.displayMovies(genre,name);
+        secondController.searchMovies(genre,name);
+        subList.clear();
         for(movies movie : movieList) {
             if (genre.length() == 0 && name.length() == 0) {
-                movieTilePane.getChildren().add(movie.movieBox);
+                subList.add(movie);
             } else {
                 if(movie.movieName.toLowerCase(Locale.ENGLISH).contains(name.toLowerCase()) && movie.genre.toLowerCase(Locale.ENGLISH).contains(genre.toLowerCase())) {
-                    movieTilePane.getChildren().add(movie.movieBox);
+                    subList.add(movie);
                 }
             }
         }
     }
+
 
 
 

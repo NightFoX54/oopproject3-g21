@@ -21,6 +21,7 @@ import java.util.Locale;
 public class CustomerSearch {
 
     public ArrayList<MovieController.movies> movieList = new ArrayList<>();
+    public ArrayList<MovieController.movies> subList = new ArrayList<>();
 
     @FXML
     private TilePane TilePane;
@@ -36,7 +37,7 @@ public class CustomerSearch {
         TilePane.getChildren().clear();
     }
 
-    public void displayMovies(String genre, String name) {
+    /*public void displayMovies(String genre, String name) {
         TilePane.getChildren().clear();
         clearMovies();
         for(MovieController.movies movie : movieList) {
@@ -49,7 +50,7 @@ public class CustomerSearch {
                 }
             }
         }
-    }
+    }*/
 
 
     @FXML
@@ -62,5 +63,32 @@ public class CustomerSearch {
         stage.show();
         secondController.stage = stage;
         sessionChooser.secondController = secondController;
+    }
+
+    public void searchMovies(String genre, String name) {
+        TilePane.getChildren().clear();
+        subList.clear();
+        for(MovieController.movies movie : movieList) {
+            if (genre.length() == 0 && name.length() == 0) {
+                subList.add(movie);
+            } else {
+                if(movie.movieName.toLowerCase(Locale.ENGLISH).contains(name.toLowerCase()) && movie.genre.toLowerCase(Locale.ENGLISH).contains(genre.toLowerCase())) {
+                    subList.add(movie);
+                }
+            }
+        }
+    }
+
+    public void updateTableData(int pageIndex, int itemsPerPage) {
+        TilePane.getChildren().clear();
+        int i = 0;
+        int fromIndex = pageIndex * itemsPerPage;
+        int toIndex = fromIndex + itemsPerPage;
+        for(MovieController.movies movie : subList) {
+            if(i >= fromIndex && i < toIndex) {
+                TilePane.getChildren().add(movie.movieBox);
+            }
+            i++;
+        }
     }
 }

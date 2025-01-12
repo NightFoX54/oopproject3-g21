@@ -99,7 +99,7 @@
                                     <TableView fx:id="sessionTable" maxHeight="344.0" prefHeight="344.0" prefWidth="1138.0" VBox.vgrow="ALWAYS">
                                        <columns>
                                           <TableColumn fx:id="sessionIdColumn" editable="false" prefWidth="119.0" sortable="false" text="Session ID" />
-                                          <TableColumn fx:id="movieNameColumn2" editable="false" minWidth="4.0" prefWidth="238.0" sortable="false" text="Movie Name" />
+                                          <TableColumn fx:id="movieNameColumn1" editable="false" minWidth="4.0" prefWidth="238.0" sortable="false" text="Movie Name" />
                                           <TableColumn fx:id="hallNameColumn" editable="false" minWidth="0.0" prefWidth="164.0" sortable="false" text="Hall Name" />
                                           <TableColumn fx:id="scheduleDateColumn" editable="false" prefWidth="194.0" sortable="false" text="Schedule Date" />
                                           <TableColumn fx:id="scheduleTimeColumn" editable="false" prefWidth="186.0" sortable="false" text="Schedule Time" />
@@ -151,10 +151,45 @@
                            <children>
                               <VBox alignment="TOP_LEFT" spacing="15.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
                                  <children>
-                                    <Label style="-fx-font-size: 24px; -fx-font-weight: bold;" text="Revenue and Tax Details:" />
-                                    <Label fx:id="totalRevenueLabel" style="-fx-font-size: 18px;" text="Total Revenue: $" />
-                                    <Label fx:id="totalTaxLabel" style="-fx-font-size: 18px;" text="Total Tax: $" />
-                                    <Button style="-fx-font-size: 18px;" text="Refresh Details" />
+                                    <AnchorPane prefHeight="25.0" prefWidth="1138.0">
+                                       <children>
+                                          <Label layoutY="1.0" style="-fx-font-size: 20; -fx-font-weight: bold;" text="Invoice Id:">
+                                             <font>
+                                                <Font name="System Bold" size="16.0" />
+                                             </font>
+                                          </Label>
+                                          <Button layoutX="268.0" layoutY="-5.0" onAction="#showInvoice" prefHeight="15.0" prefWidth="179.0" style="-fx-font-size: 14px;" text="Show Invoice" />
+                                          <TextField fx:id="invoiceIdChooser" layoutX="98.0" layoutY="3.0" />
+                                          <Label fx:id="warningLabel" layoutX="722.0" layoutY="1.0" style="-fx-text-fill: red; -fx-font-size: 20; -fx-font-weight: bold;" text="Label" />
+                                       </children>
+                                    </AnchorPane>
+                                    <TableView fx:id="seatTable" maxHeight="344.0" prefHeight="202.0" prefWidth="1138.0">
+                                       <columns>
+                                          <TableColumn fx:id="sessionIdColumn2" editable="false" prefWidth="100.0" sortable="false" text="Session ID" />
+                                          <TableColumn fx:id="movieNameColumn2" editable="false" minWidth="4.0" prefWidth="218.0" sortable="false" text="Movie Name" />
+                                          <TableColumn fx:id="scheduleDateColumn2" editable="false" minWidth="0.0" prefWidth="163.0" sortable="false" text="Schedule Date" />
+                                          <TableColumn fx:id="scheduleTimeColumn2" editable="false" prefWidth="159.0" sortable="false" text="Schedule Time" />
+                                          <TableColumn fx:id="seatHolderNameColumn2" editable="false" prefWidth="199.0" sortable="false" text="Seat Holder Name" />
+                                          <TableColumn fx:id="seatNumberColumn2" editable="false" minWidth="4.0" prefWidth="109.0" sortable="false" text="Seat Number" />
+                                          <TableColumn fx:id="ageDiscountColumn2" editable="false" minWidth="4.0" prefWidth="94.0" sortable="false" text="Age Discount" />
+                                          <TableColumn fx:id="cancelColumn2" editable="false" minWidth="4.0" prefWidth="70.0" sortable="false" text="Cancel" />
+                                       </columns>
+                                    </TableView>
+                                    <TableView fx:id="extrasTable" maxHeight="344.0" prefHeight="202.0" prefWidth="1138.0">
+                                       <columns>
+                                          <TableColumn fx:id="extrasNameColumn2" editable="false" prefWidth="208.0" sortable="false" text="Extra's Name" />
+                                          <TableColumn fx:id="quantityColumn2" editable="false" minWidth="4.0" prefWidth="289.0" sortable="false" text="Quantity" />
+                                          <TableColumn fx:id="quantityToReturnColumn2" editable="false" minWidth="0.0" prefWidth="327.0" sortable="false" text="Quantity To Return" />
+                                          <TableColumn fx:id="returnColumn2" editable="false" prefWidth="291.0" sortable="false" text="Return" />
+                                       </columns>
+                                    </TableView>
+                                    <AnchorPane prefHeight="51.0" prefWidth="1138.0">
+                                       <children>
+                                          <Label fx:id="returnAmount" layoutY="11.0" style="-fx-font-size: 24px; -fx-font-weight: bold;" text="Return Amount: 0,00" />
+                                          <Label fx:id="returnTaxAmount" layoutX="407.0" layoutY="11.0" style="-fx-font-size: 24px; -fx-font-weight: bold;" text="Return Tax Amount: 0,00" />
+                                          <Button fx:id="confirmReturnButton" layoutX="956.0" layoutY="4.0" onAction="#confirmReturn" style="-fx-font-size: 18px;" text="Confirm Return" />
+                                       </children>
+                                    </AnchorPane>
                                  </children>
                               </VBox>
                            </children>
@@ -163,7 +198,7 @@
                   </Tab>
                </tabs>
             </TabPane>
-            <Button style="-fx-background-color: red; -fx-text-fill: white; -fx-font-size: 18px;" text="Logout" />
+            <Button onAction="#logout" style="-fx-background-color: red; -fx-text-fill: white; -fx-font-size: 18px;" text="Logout" />
          </children>
       </VBox>
    </children>

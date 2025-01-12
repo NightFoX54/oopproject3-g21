@@ -156,6 +156,9 @@ public class sessionChooser {
 
     public void showSessions(){
         TableView<session> sessionTable = createSessionTable(true);
+        Pagination pagination = new Pagination();
+        int itemsPerPage = 9;
+
         secondController.table = createSessionTable(false);
         String query = "SELECT * FROM sessions WHERE movie_id = " + movieId + " ORDER BY schedule_date ASC, start_time ASC";
         try(Connection connection = Main.getConnection();
@@ -201,15 +204,43 @@ public class sessionChooser {
                 });
                 sessionList.add(new session(hall_name, schedule_date, start_time, hall_capacity, available_seats, selectSeatsButton));
             }
-            sessionTable.setItems(sessionList);
-            secondController.table.setItems(sessionList);
+            pagination.setPageCount((int) Math.ceil(sessionList.size() / (double) itemsPerPage));
+            int pageCount = pagination.getPageCount();
+            pagination.setCurrentPageIndex(0);
+            pagination.setMaxPageIndicatorCount(pageCount);
+            pagination.currentPageIndexProperty().addListener((observable, oldValue, newValue) -> {
+                updateTableData(newValue.intValue(), sessionTable, itemsPerPage);
+                updateTableData(newValue.intValue(),secondController.table, itemsPerPage);
+            });
+            updateTableData(0, sessionTable, itemsPerPage);
+            updateTableData(0,secondController.table, itemsPerPage);
+            secondController.table.setRowFactory(tableView -> {
+                TableRow<session> row = new TableRow<>();
+                row.heightProperty().addListener((observable, oldValue, newValue) -> {
+                    row.setPrefHeight(48); // You can change 100 to any value that fits your content
+                });
+                return row;
+            });
+            //sessionTable.setItems(sessionList);
             secondController.showSession();
             sessionFlowPane.getChildren().add(sessionTable);
+            sessionFlowPane.getChildren().add(pagination);
 
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private void updateTableData(int pageIndex, TableView<session> sessionTable, int itemsPerPage) {
+        int fromIndex = pageIndex * itemsPerPage;
+        int toIndex = Math.min(fromIndex + itemsPerPage, sessionList.size());
+
+        ObservableList<session> pageData = FXCollections.observableArrayList(
+                sessionList.subList(fromIndex, toIndex)
+        );
+
+        sessionTable.setItems(pageData);
     }
 
     private TableView<session> createSessionTable(boolean includeButton) {
@@ -269,7 +300,7 @@ public class sessionChooser {
         if (includeButton) {
             sessionTable.getColumns().add(button_col);
             sessionTable.setPrefWidth(1020);
-            sessionTable.setPrefHeight(455);
+            sessionTable.setPrefHeight(415);
         }
 
 

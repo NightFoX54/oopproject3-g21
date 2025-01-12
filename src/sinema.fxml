@@ -13,7 +13,11 @@
       <TextField fx:id="nameField" layoutX="14.0" layoutY="14.0" onKeyTyped="#Search" prefHeight="25.0" prefWidth="159.0" promptText="Search for movies by name" />
       <ScrollPane layoutX="178.0" layoutY="52.0" prefHeight="748.0" prefWidth="1018.0">
          <content>
-            <TilePane fx:id="movieTilePane" hgap="25" prefColumns="3" prefTileHeight="685" prefTileWidth="300" vgap="10" />
+            <AnchorPane fx:id="anchorPane" prefHeight="746.0" prefWidth="1016.0">
+               <children>
+                  <TilePane fx:id="movieTilePane" hgap="25" prefColumns="3" prefHeight="690.0" prefTileHeight="685" prefTileWidth="300" prefWidth="1012.0" vgap="10" />
+               </children>
+            </AnchorPane>
          </content>
       </ScrollPane>
       <TextField fx:id="genreField" layoutX="14.0" layoutY="52.0" onKeyTyped="#Search" prefHeight="25.0" prefWidth="159.0" promptText="Search for movies by genre" />
