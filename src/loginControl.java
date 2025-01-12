@@ -36,6 +36,9 @@ public class loginControl {
             else if(Main.currentUser.role.equals("cashier")){
                 loader = new FXMLLoader(getClass().getResource(("sinema.fxml")));
             }
+            else{
+                loader = new FXMLLoader(getClass().getResource(("admin.fxml")));
+            }
 
             root = loader.load();
             stage = (Stage)((Node)event.getSource()).getScene().getWindow();
