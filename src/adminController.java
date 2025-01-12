@@ -858,6 +858,19 @@ public class adminController {
             preparedStatement4.setDouble(2, tax);
             preparedStatement4.setString(3, invoiceIdChooser.getText());
             preparedStatement4.executeUpdate();
+            seatTable.setVisible(false);
+            seatTable.setManaged(false);
+            extrasTable.setVisible(false);
+            extrasTable.setManaged(false);
+            returnAmount.setVisible(false);
+            returnAmount.setManaged(false);
+            returnTaxAmount.setVisible(false);
+            returnTaxAmount.setManaged(false);
+            confirmReturnButton.setVisible(false);
+            confirmReturnButton.setManaged(false);
+            warningLabel.setVisible(false);
+            warningLabel.setManaged(false);
+            invoiceIdChooser.setText("");
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
