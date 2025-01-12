@@ -24,6 +24,11 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class adminController {
     @FXML
@@ -56,6 +61,24 @@ public class adminController {
     public TableColumn<sessionDetails,Boolean> deleteColumn2;
     @FXML
     public TableView<sessionDetails> sessionTable;
+    @FXML
+    public AnchorPane updatePane1;
+    @FXML
+    public ChoiceBox<String> movieNameChoice;
+    @FXML
+    public ChoiceBox<String> hallNameChoice;
+    @FXML
+    public DatePicker scheduleDateChoice;
+    @FXML
+    public ChoiceBox<String> scheduleTimeChoice;
+    @FXML
+    public Button saveScheduleButton;
+    @FXML
+    public Label dateText;
+    @FXML
+    public Label hallText;
+    @FXML
+    public Label timeText;
 
     private int updateMovieId = 0;
     private String updateMoviePoster = "";
@@ -92,6 +115,7 @@ public class adminController {
     public void initialize() {
         updatePane.setVisible(false);
         updatePane.setManaged(false);
+        hideSessionBox();
         movieList.clear();
         moviePosterColumn.setCellValueFactory(new PropertyValueFactory<>("poster"));
         movieNameColumn.setCellValueFactory(new PropertyValueFactory<>("movieName"));
@@ -293,6 +317,7 @@ public class adminController {
     }
 
     private void getSessionDetails() {
+        sessionList.clear();
         String query = "SELECT \n" +
                 "    s.*,\n" +
                 "    m.movieName AS movie_name,\n" +
@@ -355,6 +380,7 @@ public class adminController {
                     // Show the delete button for deletable movies
                     deleteButton.setOnAction(event -> {
                         sessionDetails session = getTableView().getItems().get(getIndex());
+                        deleteSession(session);
                     });
                     setGraphic(deleteButton);
                     deleteButton.setAlignment(Pos.CENTER);
@@ -369,6 +395,204 @@ public class adminController {
         sessionTable.getSortOrder().add(sessionIdColumn);
         sessionTable.setItems(sessionList);
         sessionTable.sort();
+    }
+
+    private void deleteSession(sessionDetails session) {
+        String query = "DELETE FROM sessions WHERE schedule_id = ?";
+        try(Connection connection = Main.getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setInt(1,session.getSessionId());
+            preparedStatement.executeUpdate();
+            getSessionDetails();
+            sessionTable.setItems(sessionList);
+            sessionTable.sort();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @FXML
+    public void addSessionBox(){
+        updatePane1.setVisible(true);
+        updatePane1.setManaged(true);
+        movieNameChoice.setVisible(true);
+        movieNameChoice.setManaged(true);
+        for(movieDetails movie: movieList){
+            movieNameChoice.getItems().add(movie.getMovieName());
+        }
+        ArrayList<String> hallNames = new ArrayList<>();
+        String query = "SELECT * FROM halls";
+        try(Connection connection = Main.getConnection();
+            ResultSet resultSet = connection.createStatement().executeQuery(query)) {
+            while(resultSet.next()){
+                hallNames.add(resultSet.getString("name"));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        movieNameChoice.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if(newValue!=null){
+                hallNameChoice.setVisible(true);
+                hallNameChoice.setManaged(true);
+                hallText.setVisible(true);
+                hallText.setManaged(true);
+                hallNameChoice.getItems().clear();
+                for(String hallName: hallNames){
+                    hallNameChoice.getItems().add(hallName);
+                }
+                hallNameChoice.getSelectionModel().selectedItemProperty().addListener((observable1, oldValue1, newValue1) -> {
+                    if(newValue1!=null){
+                        scheduleDateChoice.setValue(null);
+                        dateText.setVisible(true);
+                        dateText.setManaged(true);
+                        scheduleDateChoice.setVisible(true);
+                        scheduleDateChoice.setManaged(true);
+                        scheduleDateChoice.setDayCellFactory(dp -> new DateCell(){
+                            @Override
+                            public void updateItem(LocalDate date, boolean empty) {
+                                super.updateItem(date, empty);
+
+                                if (empty || date == null) {
+                                    return;
+                                }
+                                List<String> possibleTimes = List.of(
+                                        "10:00:00",
+                                        "12:00:00",
+                                        "14:00:00",
+                                        "16:00:00",
+                                        "18:00:00",
+                                        "20:00:00",
+                                        "22:00:00"
+                                );
+                                // Check if all session times are booked for this date
+                                boolean fullyBooked = sessionList.stream()
+                                        .filter(session -> session.getScheduleLocalDate().equals(date))
+                                        .filter(session -> session.getHallName().equals(hallNameChoice.getValue()))
+                                        .map(sessionDetails::getScheduleTime)
+                                        .collect(Collectors.toSet())
+                                        .containsAll(possibleTimes);
+                                if (fullyBooked) {
+                                    setDisable(true);
+                                    setStyle("-fx-background-color: #ffcccc;"); // Optional: color fully booked dates
+                                }
+                                if(date.isBefore(LocalDate.now())){
+                                    setDisable(true);
+                                    setStyle("-fx-background-color: #ffcccc;");
+                                }
+                                if(date.isEqual(LocalDate.now())){
+                                    setDisable(true);
+                                    setStyle("-fx-background-color: #ffcccc;");
+                                }
+                            }
+                        });
+                        List<String> possibleTimes = new ArrayList<>(List.of(
+                                "10:00:00",
+                                "12:00:00",
+                                "14:00:00",
+                                "16:00:00",
+                                "18:00:00",
+                                "20:00:00",
+                                "22:00:00"
+                        ));
+                        // Check if all session times are booked for this date
+                        List<String> bookedTimes = sessionList.stream()
+                                .filter(session -> session.getScheduleLocalDate().equals(scheduleDateChoice.getValue()))
+                                .filter(session -> session.getHallName().equals(hallNameChoice.getValue()))
+                                .map(sessionDetails::getScheduleTime)
+                                .toList();
+
+                        possibleTimes.removeAll(bookedTimes);
+                        scheduleDateChoice.valueProperty().addListener((observable2, oldValue2, newValue2) -> {
+                            if(newValue2!=null){
+                                timeText.setVisible(true);
+                                timeText.setManaged(true);
+                                scheduleTimeChoice.setVisible(true);
+                                scheduleTimeChoice.setManaged(true);
+                                scheduleTimeChoice.getItems().clear();
+                                scheduleTimeChoice.getItems().addAll(possibleTimes);
+                                scheduleTimeChoice.valueProperty().addListener((observable3, oldValue3, newValue3) -> {
+                                    if(newValue3!=null){
+                                        saveScheduleButton.setVisible(true);
+                                        saveScheduleButton.setManaged(true);
+                                        saveScheduleButton.setOnAction(event -> {
+                                            saveSchedule(movieNameChoice.getValue(), hallNameChoice.getValue(), scheduleDateChoice.getValue().toString(), scheduleTimeChoice.getValue());
+                                        });
+                                    }
+                                    else{
+                                        saveScheduleButton.setVisible(false);
+                                        saveScheduleButton.setManaged(false);
+                                    }
+                                });
+                            }
+                            else{
+                                timeText.setVisible(false);
+                                timeText.setManaged(false);
+                                scheduleTimeChoice.setVisible(false);
+                                scheduleTimeChoice.setManaged(false);
+                            }
+                        });
+                    }
+                    else{
+                        scheduleDateChoice.setValue(null);
+                        dateText.setVisible(false);
+                        dateText.setManaged(false);
+                        scheduleDateChoice.setVisible(false);
+                        scheduleDateChoice.setManaged(false);
+                    }
+                });
+            }
+        });
+    }
+
+    public void saveSchedule(String movieName, String hallName, String scheduleDate, String scheduleTime) {
+
+        String query = "INSERT INTO sessions (movie_id, hall_id, schedule_date, start_time, available_seats)\n" +
+                "SELECT\n" +
+                "    m.id,\n" +
+                "    h.hall_id,\n" +
+                "    ?,\n" +
+                "    ?,\n" +
+                "    h.capacity\n" +
+                "FROM movies m\n" +
+                "JOIN halls h ON m.movieName = ? AND h.name = ?\n" +
+                "LIMIT 1;";
+        try(Connection connection = Main.getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setString(1, scheduleDate);
+            preparedStatement.setString(2, scheduleTime);
+            preparedStatement.setString(3, movieName);
+            preparedStatement.setString(4, hallName);
+            preparedStatement.executeUpdate();
+            movieNameChoice.getItems().clear();
+            updatePane1.setVisible(false);
+            updatePane.setManaged(false);
+            getSessionDetails();
+            sessionTable.setItems(sessionList);
+            sessionTable.sort();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void hideSessionBox(){
+        updatePane1.setVisible(false);
+        updatePane1.setManaged(false);
+        movieNameChoice.setVisible(false);
+        hallNameChoice.setVisible(false);
+        scheduleDateChoice.setVisible(false);
+        scheduleTimeChoice.setVisible(false);
+        movieNameChoice.setManaged(false);
+        hallNameChoice.setManaged(false);
+        scheduleDateChoice.setManaged(false);
+        scheduleTimeChoice.setManaged(false);
+        saveScheduleButton.setVisible(false);
+        saveScheduleButton.setManaged(false);
+        hallText.setVisible(false);
+        hallText.setManaged(false);
+        dateText.setVisible(false);
+        dateText.setManaged(false);
+        timeText.setVisible(false);
+        timeText.setManaged(false);
     }
 
     public class sessionDetails {
@@ -404,6 +628,10 @@ public class adminController {
         }
         public boolean getDeleteButton() {
             return deleteButton.get();
+        }
+        public LocalDate getScheduleLocalDate(){
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            return LocalDate.parse(scheduleDate.get(), formatter);
         }
     }
 

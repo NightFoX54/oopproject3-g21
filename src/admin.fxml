@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
@@ -20,7 +22,7 @@
             <Label alignment="CENTER" style="-fx-font-size: 36px; -fx-font-weight: bold;" text="Admin Panel" />
             <TabPane fx:id="mainTabPane" VBox.vgrow="ALWAYS">
                <tabs>
-                  <Tab text="Movie Management">
+                  <Tab closable="false" text="Movie Management">
                      <content>
                         <AnchorPane>
                            <children>
@@ -81,7 +83,7 @@
                         </AnchorPane>
                      </content>
                   </Tab>
-                  <Tab text="Update Schedules">
+                  <Tab closable="false" text="Update Schedules">
                      <content>
                         <AnchorPane>
                            <children>
@@ -91,7 +93,7 @@
                                     <AnchorPane prefHeight="35.0" prefWidth="1138.0">
                                        <children>
                                           <Label layoutX="14.0" layoutY="4.0" style="-fx-font-size: 24px; -fx-font-weight: bold;" text="Current Schedules:" />
-                                          <Button layoutX="955.0" layoutY="-1.0" onAction="#addMovieBox" prefHeight="16.0" prefWidth="169.0" style="-fx-font-size: 15;" text="Add Schedule" />
+                                          <Button layoutX="955.0" layoutY="-1.0" onAction="#addSessionBox" prefHeight="16.0" prefWidth="169.0" style="-fx-font-size: 15;" text="Add Schedule" />
                                        </children>
                                     </AnchorPane>
                                     <TableView fx:id="sessionTable" maxHeight="344.0" prefHeight="344.0" prefWidth="1138.0" VBox.vgrow="ALWAYS">
@@ -108,32 +110,31 @@
                                        <children>
                                           <AnchorPane fx:id="updatePane1" prefHeight="35.0" prefWidth="1138.0">
                                              <children>
-                                                <TextField fx:id="nameField1" layoutX="64.0" layoutY="10.0" promptText="Movie Name" style="-fx-font-size: 18px;" />
-                                                <TextField fx:id="summaryField1" layoutX="686.0" layoutY="10.0" promptText="Movie Summary" style="-fx-font-size: 18px;" />
-                                                <TextField fx:id="genreField1" layoutX="362.0" layoutY="10.0" promptText="Movie Genre" style="-fx-font-size: 18px;" />
-                                                <Button layoutX="918.0" layoutY="6.0" onAction="#saveMovie" style="-fx-font-size: 18px;" text="Save Movie" />
-                                                <TextField fx:id="posterField1" editable="false" layoutX="70.0" layoutY="63.0" promptText="Poster File Name" style="-fx-font-size: 18px;" />
-                                                <Button layoutX="301.0" layoutY="59.0" onAction="#selectImageFile" style="-fx-font-size: 18px;" text="Select Image" />
-                                                <Label layoutX="610.0" layoutY="16.0" prefHeight="23.0" prefWidth="76.0" style="-fx-font-size: 15; -fx-font-weight: bold;" text="Summary:">
+                                                <Button fx:id="saveScheduleButton" layoutX="972.0" layoutY="38.0" style="-fx-font-size: 18px;" text="Save Schedule" />
+                                                <Label fx:id="dateText" layoutX="14.0" layoutY="71.0" prefHeight="23.0" prefWidth="115.0" style="-fx-font-size: 15; -fx-font-weight: bold;" text="Schedule Date:">
                                                    <font>
                                                       <Font name="System Bold" size="15.0" />
                                                    </font>
                                                 </Label>
-                                                <Label layoutX="308.0" layoutY="16.0" prefHeight="23.0" prefWidth="54.0" style="-fx-font-size: 15; -fx-font-weight: bold;" text="Genre:">
+                                                <Label fx:id="hallText" layoutX="274.0" layoutY="16.0" prefHeight="23.0" prefWidth="81.0" style="-fx-font-size: 15; -fx-font-weight: bold;" text="Hall Name:">
                                                    <font>
                                                       <Font name="System Bold" size="15.0" />
                                                    </font>
                                                 </Label>
-                                                <Label layoutX="14.0" layoutY="16.0" prefHeight="23.0" prefWidth="82.0" style="-fx-font-size: 15; -fx-font-weight: bold;" text="Name:">
+                                                <Label layoutX="14.0" layoutY="16.0" prefHeight="23.0" prefWidth="101.0" style="-fx-font-size: 15; -fx-font-weight: bold;" text="Movie Name:">
                                                    <font>
                                                       <Font name="System Bold" size="15.0" />
                                                    </font>
                                                 </Label>
-                                                <Label layoutX="14.0" layoutY="69.0" prefHeight="23.0" prefWidth="82.0" style="-fx-font-size: 15; -fx-font-weight: bold;" text="Poster:">
+                                                <Label fx:id="timeText" layoutX="304.0" layoutY="71.0" prefHeight="23.0" prefWidth="115.0" style="-fx-font-size: 15; -fx-font-weight: bold;" text="Schedule Time:">
                                                    <font>
                                                       <Font name="System Bold" size="15.0" />
                                                    </font>
                                                 </Label>
+                                                <ChoiceBox fx:id="movieNameChoice" layoutX="115.0" layoutY="15.0" prefWidth="150.0" />
+                                                <ChoiceBox fx:id="hallNameChoice" layoutX="355.0" layoutY="16.0" prefWidth="150.0" />
+                                                <DatePicker fx:id="scheduleDateChoice" layoutX="122.0" layoutY="71.0" />
+                                                <ChoiceBox fx:id="scheduleTimeChoice" layoutX="419.0" layoutY="71.0" prefWidth="150.0" />
                                              </children>
                                           </AnchorPane>
                                        </children>
@@ -144,7 +145,7 @@
                         </AnchorPane>
                      </content>
                   </Tab>
-                  <Tab text="Cancellations">
+                  <Tab closable="false" text="Cancellations">
                      <content>
                         <AnchorPane>
                            <children>
