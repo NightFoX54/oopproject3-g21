@@ -15,15 +15,32 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
+/**
+ * CustomerSession class manages the session selection functionality for customers.
+ * It allows customers to view available movie sessions and navigate to seat selection or search screens.
+ */
 public class CustomerSession {
+
+    /**
+     * The main stage for the session selection screen.
+     */
     public Stage stage;
 
+     /**
+     * TableView to display session details.
+     */
     public TableView<sessionChooser.session> table;
 
     @FXML
     private FlowPane sessionFlowPane;
 
-
+    /**
+     * Displays the movie details including title, genre, summary, and poster image.
+     * @param movieName The name of the movie.
+     * @param movieGenre The genre of the movie.
+     * @param movieSummary A short summary of the movie.
+     * @param moviePosterPath The file path to the movie poster image.
+     */
     public void showMovie(String movieName, String movieGenre, String movieSummary, String moviePosterPath) {
         Label titleLabel = new Label("Title: " + movieName);
         titleLabel.getStyleClass().add("no-hover");
@@ -60,10 +77,17 @@ public class CustomerSession {
         sessionFlowPane.getChildren().add(movieBox);
     }
 
+    /**
+     * Displays the session details in the sessionFlowPane.
+     */
     public void showSession(){
         sessionFlowPane.getChildren().add(table);
     }
 
+     /**
+     * Navigates to the search screen.
+     * @throws IOException If the FXML file cannot be loaded.
+     */
     @FXML
     public void goToSearch() throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("customerSearch.fxml"));
@@ -75,6 +99,10 @@ public class CustomerSession {
         MovieController.secondController = secondController;
     }
 
+     /**
+     * Navigates to the seat selection screen.
+     * @throws IOException If the FXML file cannot be loaded.
+     */
     public void goToSeatSelection() throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("customerSeat.fxml"));
         Parent root = loader.load();
