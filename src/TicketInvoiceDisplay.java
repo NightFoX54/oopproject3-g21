@@ -11,12 +11,33 @@ import org.apache.pdfbox.rendering.PDFRenderer;
 import java.io.File;
 import java.io.IOException;
 
+/**
+ * The TicketInvoiceDisplay class handles the display of ticket and invoice PDFs within the application.
+ * It uses Apache PDFBox to render the PDFs and converts them to JavaFX images for display.
+ */
 public class TicketInvoiceDisplay {
+
+     /**
+     * The primary stage for displaying ticket and invoice details.
+     */
     public Stage stage;
+
+    /**
+     * TilePane for displaying the invoice pages.
+     */
     @FXML
     TilePane invoicePane;
+
+    /**
+     * TilePane for displaying the ticket pages.
+     */
     @FXML
     TilePane ticketPane;
+
+      /**
+     * Initializes the TicketInvoiceDisplay controller by loading and rendering the ticket and invoice PDFs.
+     * @throws IOException If an error occurs while loading or rendering the PDF files.
+     */
     @FXML
     public void initialize() throws IOException {
         File invoiceFile = new File("invoice.pdf");
@@ -44,12 +65,24 @@ public class TicketInvoiceDisplay {
 
     }
 
+    /**
+     * Renders a single page of a PDF to a JavaFX Image.
+     * @param renderer The PDFRenderer used to render the PDF page.
+     * @param pageIndex The index of the page to render.
+     * @return The rendered page as a JavaFX Image.
+     * @throws IOException If an error occurs during rendering.
+     */
     private Image renderPDFPageToImage(PDFRenderer renderer, int pageIndex) throws IOException {
         java.awt.image.BufferedImage bufferedImage = renderer.renderImageWithDPI(pageIndex, 300);
         javafx.scene.image.Image javafxImage = convertToFXImage(bufferedImage);
         return javafxImage;
     }
 
+    /**
+     * Converts a BufferedImage to a JavaFX Image.
+     * @param bufferedImage The BufferedImage to convert.
+     * @return The converted JavaFX Image.
+     */
     private javafx.scene.image.Image convertToFXImage(java.awt.image.BufferedImage bufferedImage) {
         javafx.scene.image.WritableImage writableImage = new javafx.scene.image.WritableImage(
                 bufferedImage.getWidth(), bufferedImage.getHeight());
