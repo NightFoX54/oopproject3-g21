@@ -18,9 +18,20 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Set;
 
+/**
+ * CustomerSeat class handles the seat selection functionality for a movie session.
+ * It allows customers to view available and sold seats, select seats, and navigate between screens.
+ */
 public class CustomerSeat {
+
+    /**
+     * The main stage for displaying the seat selection screen.
+     */
     public Stage stage;
 
+     /**
+     * The grid layout used to display seats.
+     */
     GridPane grid;
 
     @FXML
@@ -29,20 +40,30 @@ public class CustomerSeat {
     @FXML
     private TilePane movieTile;
 
+    /**
+     * The count of currently selected seats.
+     */
     public int seat = 0;
 
     @FXML
     Label screen;
 
+    /**
+     * Initializes the screen label and grid layout for seat selection.
+     */
     @FXML
     public void initialize() {
         screen.setStyle("-fx-font-size: 25;");
         grid = new GridPane();
     }
 
-
-
-
+    /**
+     * Displays the seats in a grid layout.
+     * @param rows Number of rows of seats.
+     * @param cols Number of columns of seats.
+     * @param soldSeats Set of seat names that are already sold.
+     * @param selectedSeats List of seat names that are currently selected by the user.
+     */
     public void showSeats(int rows, int cols, Set<String> soldSeats, ArrayList<String> selectedSeats) {
         grid.setPrefHeight(520);
         double gap = 600 / (cols * 4 - 1);
@@ -106,6 +127,12 @@ public class CustomerSeat {
         Pane.getChildren().add(grid);
     }
 
+     /**
+     * Updates the appearance of a specific seat.
+     * @param seatName The name of the seat to update.
+     * @param buttonSize The size of the button representing the seat.
+     * @param selection Indicates whether the seat is selected (1) or not (0).
+     */
     public void updateSeats(String seatName, double buttonSize, int selection) {
         int row = seatName.charAt(0) - '0';
         int col = seatName.charAt(1) - '0';
@@ -151,6 +178,14 @@ public class CustomerSeat {
         grid.add(seatStack, col, row);
     }
 
+    /**
+     * Displays movie details, including title, hall, date, time, and poster.
+     * @param movieName The name of the movie.
+     * @param hallName The name of the hall.
+     * @param sessionDate The date of the session.
+     * @param sessionTime The time of the session.
+     * @param posterPath The path to the movie poster image.
+     */
     public void showMovie(String movieName, String hallName, String sessionDate, String sessionTime, String posterPath) {
         Label titleLabel = new Label("Title: " + movieName);
         titleLabel.getStyleClass().add("no-hover");
@@ -172,6 +207,10 @@ public class CustomerSeat {
         movieTile.getChildren().add(movieBox);
     }
 
+     /**
+     * Navigates to the search screen.
+     * @throws IOException If the FXML file cannot be loaded.
+     */
     public void goToSearch() throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("customerSearch.fxml"));
         Parent root = loader.load();
@@ -182,6 +221,10 @@ public class CustomerSeat {
         MovieController.secondController = secondController;
     }
 
+    /**
+     * Navigates to the session selection screen.
+     * @throws IOException If the FXML file cannot be loaded.
+     */
     public void goToSession() throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("customerSession.fxml"));
         Parent root = loader.load();
@@ -192,6 +235,10 @@ public class CustomerSeat {
         sessionChooser.secondController = secondController;
     }
 
+    /**
+     * Navigates to the cart screen.
+     * @throws IOException If the FXML file cannot be loaded.
+     */
     public void goToCart() throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("customerCart.fxml"));
         Parent root = loader.load();
