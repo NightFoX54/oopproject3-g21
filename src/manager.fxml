@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane prefHeight="800.0" prefWidth="1200.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ManagerController">
+    <children>
+        <Label fx:id="userInfoLabel" layoutX="10.0" layoutY="10.0" style="-fx-font-size: 18px; -fx-font-weight: bold;" text="Username:" />
+        <VBox alignment="TOP_CENTER" spacing="20.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="50.0">
+            <Label alignment="CENTER" style="-fx-font-size: 36px; -fx-font-weight: bold;" text="Manager Panel" />
+            <TabPane fx:id="mainTabPane" VBox.vgrow="ALWAYS">
+                <Tab text="Inventory Management">
+                    <AnchorPane>
+                        <VBox alignment="TOP_LEFT" spacing="15.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+                            <Label style="-fx-font-size: 24px; -fx-font-weight: bold;" text="Current Stock:" />
+                            <TableView fx:id="inventoryTable" VBox.vgrow="ALWAYS">
+                                <columns>
+                                    <TableColumn fx:id="productNameColumn" text="Product Name" />
+                                    <TableColumn fx:id="productCategoryColumn" text="Category" />
+                                    <TableColumn fx:id="productStockColumn" text="Current Stock" />
+                                </columns>
+                            </TableView>
+                            <HBox alignment="CENTER_LEFT" spacing="15.0">
+                                <TextField fx:id="productNameField" promptText="Product Name" style="-fx-font-size: 18px;" />
+                                <TextField fx:id="addStockField" promptText="Quantity to Add" style="-fx-font-size: 18px;" />
+                                <Button onAction="#updateStock" style="-fx-font-size: 18px;" text="Update Stock" />
+                            </HBox>
+                            <HBox alignment="CENTER_LEFT" spacing="15.0">
+                                <TextField fx:id="addStockProductNameField" promptText="Product Name" style="-fx-font-size: 18px;" />
+                                <TextField fx:id="addStockQuantityField" promptText="Quantity to Add" style="-fx-font-size: 18px;" />
+                                <TextField fx:id="addStockPriceField" promptText="Price" style="-fx-font-size: 18px;" />
+                                <Button onAction="#addStock" style="-fx-font-size: 18px;" text="Add Stock" />
+                            </HBox>
+                            <HBox alignment="CENTER_LEFT" spacing="15.0">
+                                <TextField fx:id="imageFilePathField" promptText="Image File Path" style="-fx-font-size: 18px;" editable="false" />
+                                <Button onAction="#selectImageFile" style="-fx-font-size: 18px;" text="Select Image" />
+                            </HBox>
+                        </VBox>
+                    </AnchorPane>
+                </Tab>
+                <Tab text="Personnel Management">
+                    <AnchorPane>
+                        <VBox alignment="TOP_LEFT" spacing="15.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+                            <Label style="-fx-font-size: 24px; -fx-font-weight: bold;" text="Employee List:" />
+                            <TableView fx:id="personnelTable" VBox.vgrow="ALWAYS">
+                                <columns>
+                                    <TableColumn fx:id="employeeNameColumn" text="Name" />
+                                    <TableColumn fx:id="employeeRoleColumn" text="Role" />
+                                </columns>
+                            </TableView>
+                            <HBox alignment="CENTER_LEFT" spacing="15.0">
+                                <Button style="-fx-font-size: 18px;" text="Update Details" />
+                                <Button onAction="#fireEmployee" style="-fx-font-size: 18px;" text="Fire Employee" />
+                            </HBox>
+                            <Button onAction="#hireEmployeePopup" style="-fx-background-color: lightgreen; -fx-font-size: 18px;" text="Hire New Employee" />
+                        </VBox>
+                    </AnchorPane>
+                </Tab>
+                <Tab text="Pricing Management">
+                    <AnchorPane>
+                        <VBox alignment="TOP_LEFT" spacing="15.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+                            <Label style="-fx-font-size: 24px; -fx-font-weight: bold;" text="Update Prices:" />
+                            <HBox alignment="CENTER_LEFT" spacing="15.0">
+                                <TextField fx:id="updateProductNameField" promptText="Product Name" style="-fx-font-size: 18px;" />
+                                <TextField fx:id="newPriceField" promptText="New Price" style="-fx-font-size: 18px;" />
+                                <Button onAction="#updatePrice" style="-fx-font-size: 18px;" text="Update Price" />
+                            </HBox>
+                            <HBox alignment="CENTER_LEFT" spacing="15.0">
+                                <TextField fx:id="ticketPriceField" promptText="New Ticket Price" style="-fx-font-size: 18px;" />
+                                <Button onAction="#updateTicketPrice" style="-fx-font-size: 18px;" text="Update Ticket Price" />
+                            </HBox>
+                        </VBox>
+                    </AnchorPane>
+                </Tab>
+                <Tab text="Revenue and Tax">
+                    <AnchorPane>
+                        <VBox alignment="TOP_LEFT" spacing="15.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+                            <Label style="-fx-font-size: 24px; -fx-font-weight: bold;" text="Revenue and Tax Details:" />
+                            <Label fx:id="totalRevenueLabel" style="-fx-font-size: 18px;" text="Total Revenue: $" />
+                            <Label fx:id="totalTaxLabel" style="-fx-font-size: 18px;" text="Total Tax: $" />
+                            <Button style="-fx-font-size: 18px;" text="Refresh Details" />
+                        </VBox>
+                    </AnchorPane>
+                </Tab>
+            </TabPane>
+            <Button onAction="#logout" style="-fx-background-color: red; -fx-text-fill: white; -fx-font-size: 18px;" text="Logout" />
+        </VBox>
+    </children>
+</AnchorPane>
