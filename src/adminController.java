@@ -466,8 +466,12 @@ public class adminController {
                 } else if (deleteColumn) {
                     // Show the delete button for deletable movies
                     deleteButton.setOnAction(event -> {
+
                         sessionDetails session = getTableView().getItems().get(getIndex());
                         deleteSession(session);
+                        LocalDate date = scheduleDateChoice.getValue();
+                        scheduleDateChoice.setValue(null);
+                        scheduleDateChoice.setValue(date);
                     });
                     setGraphic(deleteButton);
                     deleteButton.setAlignment(Pos.CENTER);
@@ -573,25 +577,28 @@ public class adminController {
                                     }
                                 }
                             });
-                            List<String> possibleTimes = new ArrayList<>(List.of(
-                                    "10:00:00",
-                                    "12:00:00",
-                                    "14:00:00",
-                                    "16:00:00",
-                                    "18:00:00",
-                                    "20:00:00",
-                                    "22:00:00"
-                            ));
-                            // Check if all session times are booked for this date
-                            List<String> bookedTimes = sessionList.stream()
-                                    .filter(session -> session.getScheduleLocalDate().equals(scheduleDateChoice.getValue()))
-                                    .filter(session -> session.getHallName().equals(hallNameChoice.getValue()))
-                                    .map(sessionDetails::getScheduleTime)
-                                    .toList();
 
-                            possibleTimes.removeAll(bookedTimes);
                             scheduleDateChoice.valueProperty().addListener((observable2, oldValue2, newValue2) -> {
                                 if (newValue2 != null) {
+                                    List<String> possibleTimes = new ArrayList<>(List.of(
+                                            "10:00:00",
+                                            "12:00:00",
+                                            "14:00:00",
+                                            "16:00:00",
+                                            "18:00:00",
+                                            "20:00:00",
+                                            "22:00:00"
+                                    ));
+                                    // Check if all session times are booked for this date
+                                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                                    String formattedDate = newValue2.format(formatter);
+                                    List<String> bookedTimes = sessionList.stream()
+                                            .filter(session -> session.getScheduleLocalDate().format(formatter).equals(formattedDate))
+                                            .filter(session -> session.getHallName().equals(hallNameChoice.getValue()))
+                                            .map(sessionDetails::getScheduleTime)
+                                            .toList();
+
+                                    possibleTimes.removeAll(bookedTimes);
                                     timeText.setVisible(true);
                                     timeText.setManaged(true);
                                     scheduleTimeChoice.setVisible(true);
@@ -627,9 +634,17 @@ public class adminController {
                         }
                     });
                 }
+                else{
+                    hallNameChoice.setValue(null);
+                    hallText.setVisible(false);
+                    hallText.setManaged(false);
+                    hallNameChoice.setVisible(false);
+                    hallNameChoice.setManaged(false);
+                }
             });
         }
         else{
+            movieNameChoice.setValue(null);
             updatePane1.setVisible(false);
             updatePane1.setManaged(false);
             movieNameChoice.setVisible(false);
@@ -657,7 +672,9 @@ public class adminController {
             preparedStatement.setString(3, movieName);
             preparedStatement.setString(4, hallName);
             preparedStatement.executeUpdate();
+            movieNameChoice.setValue(null);
             movieNameChoice.getItems().clear();
+
             updatePane1.setVisible(false);
             updatePane.setManaged(false);
             getSessionDetails();

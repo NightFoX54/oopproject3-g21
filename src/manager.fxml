@@ -40,7 +40,7 @@
                                 <Button onAction="#addStock" style="-fx-font-size: 18px;" text="Add Stock" />
                             </HBox>
                             <HBox alignment="CENTER_LEFT" spacing="15.0">
-                                <TextField fx:id="imageFilePathField" promptText="Image File Path" style="-fx-font-size: 18px;" editable="false" />
+                                <TextField fx:id="imageFilePathField" editable="false" promptText="Image File Path" style="-fx-font-size: 18px;" />
                                 <Button onAction="#selectImageFile" style="-fx-font-size: 18px;" text="Select Image" />
                             </HBox>
                         </VBox>
@@ -84,9 +84,10 @@
                     <AnchorPane>
                         <VBox alignment="TOP_LEFT" spacing="15.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
                             <Label style="-fx-font-size: 24px; -fx-font-weight: bold;" text="Revenue and Tax Details:" />
-                            <Label fx:id="totalRevenueLabel" style="-fx-font-size: 18px;" text="Total Revenue: $" />
-                            <Label fx:id="totalTaxLabel" style="-fx-font-size: 18px;" text="Total Tax: $" />
-                            <Button style="-fx-font-size: 18px;" text="Refresh Details" />
+                            <Label fx:id="totalRevenueLabel" style="-fx-font-size: 18px;" text="Total Gross Revenue: " />
+                            <Label fx:id="totalTaxLabel" style="-fx-font-size: 18px;" text="Total Tax: " />
+                     <Label fx:id="totalSalesLabel" style="-fx-font-size: 18px;" text="Total Sales:" />
+                            <Button onAction="#refreshDetails" style="-fx-font-size: 18px;" text="Refresh Details" />
                         </VBox>
                     </AnchorPane>
                 </Tab>

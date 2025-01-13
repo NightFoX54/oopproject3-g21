@@ -73,7 +73,7 @@ public class MovieController {
             secondController.updateTableData(newValue.intValue(), 3);
         });
         pagination.setLayoutX(14);
-        pagination.setLayoutY(700);
+        pagination.setLayoutY(695);
         anchorPane.getChildren().add(pagination);
         updateTableData(0,3);
         name.setText("Welcome " + Main.currentUser.name + " " + Main.currentUser.surname + "!");

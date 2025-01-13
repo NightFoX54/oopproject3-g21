@@ -37,7 +37,12 @@ import javafx.stage.Stage;
 
 
 public class ManagerController {
-
+    @FXML
+    public Label totalRevenueLabel;
+    @FXML
+    public Label totalTaxLabel;
+    @FXML
+    public Label totalSalesLabel;
     @FXML
     private TextField addStockField;
 
@@ -154,6 +159,7 @@ public class ManagerController {
             String role = Main.currentUser.getRole();
             userInfoLabel.setText("Welcome" + username);
         }
+        refreshDetails();
     }
 
     private void loadInventoryData() {
@@ -527,7 +533,26 @@ public class ManagerController {
     }
 
     
-
+    @FXML
+    public void refreshDetails(){
+        double total_revenue = 0;
+        double total_tax = 0;
+        int total_sales = 0;
+        String query = "SELECT * FROM completed_sells";
+        try(Connection connection = Main.getConnection();
+            ResultSet resultSet = connection.createStatement().executeQuery(query)) {
+            while (resultSet.next()) {
+                total_sales++;
+                total_revenue += resultSet.getDouble("total_price");
+                total_tax += resultSet.getDouble("total_tax");
+            }
+            totalRevenueLabel.setText("Total Gross Revenue: " + total_revenue);
+            totalTaxLabel.setText("Total Tax: " + total_tax);
+            totalSalesLabel.setText("Total Sales: " + total_sales);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     @FXML
     void logout(ActionEvent event) throws IOException {
