@@ -18,21 +18,45 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Locale;
 
+/**
+ * CustomerSearch is responsible for displaying a list of movies to customers,
+ * allowing them to search and filter movies by genre and name.
+ */
 public class CustomerSearch {
 
+    /**
+     * List of all movies available.
+     */
     public ArrayList<MovieController.movies> movieList = new ArrayList<>();
+
+     /**
+     * Filtered list of movies based on the search criteria.
+     */
     public ArrayList<MovieController.movies> subList = new ArrayList<>();
 
+     /**
+     * The TilePane UI component where movie information is displayed.
+     */
     @FXML
     private TilePane TilePane;
 
+      /**
+     * The main stage for the customer search screen.
+     */
     public Stage stage = new Stage();
 
+    /**
+     * Initializes the CustomerSearch controller.
+     * @throws IOException If an error occurs during initialization.
+     */
     @FXML
     public void initialize() throws IOException {
 
     }
 
+    /**
+     * Clears all movies displayed in the TilePane.
+     */
     public void clearMovies(){
         TilePane.getChildren().clear();
     }
@@ -53,6 +77,10 @@ public class CustomerSearch {
     }*/
 
 
+    /**
+     * Navigates to the session selection screen.
+     * @throws IOException If the FXML file for the session screen cannot be loaded.
+     */
     @FXML
     public void goToSessions() throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("customerSession.fxml"));
@@ -65,6 +93,11 @@ public class CustomerSearch {
         sessionChooser.secondController = secondController;
     }
 
+     /**
+     * Filters the movies based on the provided genre and name.
+     * @param genre The genre to filter movies by.
+     * @param name The name to filter movies by.
+     */
     public void searchMovies(String genre, String name) {
         TilePane.getChildren().clear();
         subList.clear();
@@ -79,6 +112,11 @@ public class CustomerSearch {
         }
     }
 
+    /**
+     * Updates the TilePane with a paginated view of the movies.
+     * @param pageIndex The current page index.
+     * @param itemsPerPage The number of items to display per page.
+     */
     public void updateTableData(int pageIndex, int itemsPerPage) {
         TilePane.getChildren().clear();
         int i = 0;
