@@ -14,8 +14,16 @@ import java.time.LocalTime;
 import java.util.Random;
 
 
+/**
+ * The Main class is the entry point for the Group21 CinemaCenter application.
+ * It initializes the JavaFX application and provides utility methods for database connection
+ * and string manipulation.
+ */
 public class Main extends Application {
 
+     /**
+     * Represents the currently logged-in user.
+     */
     static user currentUser;
 
     /*public void dateInjector(){
@@ -70,6 +78,11 @@ public class Main extends Application {
     }*/
 
 
+    /**
+     * Initializes the JavaFX application by loading the login screen.
+     * @param stage The primary stage for this application.
+     * @throws IOException If the FXML file for the login screen cannot be loaded.
+     */
     @Override
     public void start(Stage stage) throws IOException {
         //dateInjector();
@@ -81,15 +94,30 @@ public class Main extends Application {
 
     }
 
+     /**
+     * Capitalizes the first letter of the given string and converts the rest to lowercase.
+     * @param str The input string.
+     * @return The modified string with the first letter capitalized.
+     */
     public static String capitalizeFirstLetter(String str) {
         if(str == null || str.length() == 0)
             return str;
         return str.substring(0, 1).toUpperCase() + str.substring(1).toLowerCase();
     }
 
+     /**
+     * Establishes a connection to the database.
+     * @return A Connection object for the database.
+     * @throws SQLException If a database access error occurs.
+     */
     public static Connection getConnection() throws SQLException {
         return DriverManager.getConnection("jdbc:mysql://localhost:3306/project3","myuser","1234");
     }
+
+    /**
+     * The main entry point of the application.
+     * @param args Command-line arguments passed to the application.
+     */
     public static void main(String[] args) {
         launch(args);
     }
