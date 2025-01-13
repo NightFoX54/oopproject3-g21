@@ -36,6 +36,13 @@ public class CustomerCart {
     private VBox ticketBox = new VBox();
     private VBox extrasBox = new VBox();
 
+    /**
+     * If ticket information added to cart. The function updates teh information of the ticket in the cart.
+     * @param seatsToSell List of seat information respective to associated customer.
+     * @param selectedSeats List of selected seats.
+     * @param ageDiscount Percentage of discount depending on customers age.
+     */
+    
     public void updateTickets(ArrayList<SeatInfo> seatsToSell, ArrayList<String> selectedSeats, int ageDiscount){
         ticketBox.setSpacing(20);
         ticketBox.getChildren().clear();
@@ -95,6 +102,10 @@ public class CustomerCart {
     }
 
 
+     /**
+     * The method is updating the extras in the cart.
+     * @param soldExtras List of extra items in the cart.
+     */
     public void updateExtras(ArrayList<extrasInfo> soldExtras){
         extrasBox.getChildren().clear();
         extrasBox.setSpacing(20);
@@ -122,10 +133,22 @@ public class CustomerCart {
         }
     }
 
+    /**
+     * The method is updating the total price.
+     * @param price Total price.
+     */
     public void updatePrice(String price){
         totalPrice.setText("Total Price: " + price);
     }
 
+    /**
+     * The method for displaying the selected movies details. 
+     * @param movieName Name of the movie.
+     * @param hallName Name of the hall.
+     * @param sessionDate Date of the session.
+     * @param sessionTime Time of the session.
+     * @param image Poster of the movie.
+     */
     public void showMovie(String movieName, String hallName, String sessionDate, String sessionTime, Image image) {
         Label titleLabel = new Label("Title: " + movieName);
         titleLabel.getStyleClass().add("no-hover");
@@ -149,6 +172,10 @@ public class CustomerCart {
         agePane.getChildren().addAll(ticketBox, extrasBox);
     }
 
+    /**
+     * Navigation operation to the search screen.
+     * @throws IOException If the FXML file cannot be loaded.
+     */
     public void goToSearch() throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("customerSearch.fxml"));
         Parent root = loader.load();
@@ -160,6 +187,10 @@ public class CustomerCart {
         MovieController.secondController = secondController;
     }
 
+     /**
+     * Navigation operation for the session selection screen.
+     * @throws IOException If the FXML file cannot be loaded.
+     */
     public void goToSession() throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("customerSession.fxml"));
         Parent root = loader.load();
@@ -171,6 +202,10 @@ public class CustomerCart {
         sessionChooser.secondController = secondController;
     }
 
+    /**
+     * Navigateion operation to the seat selection screen.
+     * @throws IOException If the FXML file cannot be loaded.
+     */
     public void goToSeat() throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("customerSeat.fxml"));
         Parent root = loader.load();
@@ -182,6 +217,10 @@ public class CustomerCart {
         seatSelection.secondController = secondController;
     }
 
+    /**
+     * Displaying operation for the ticket invoice.
+     * @throws IOException If the FXML file cannot be loaded.
+     */
     public void displayTicket() throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("ticket_invoice_display.fxml"));
         Parent root = loader.load();
@@ -193,6 +232,10 @@ public class CustomerCart {
         ageConfirmation.thirdController = secondController;
     }
 
+    /**
+     * Ends the current session and navigates back to the search screen.
+     * @throws IOException If the FXML file cannot be loaded.
+     */
     public void finishSession() throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("customerSearch.fxml"));
         Parent root = loader.load();
