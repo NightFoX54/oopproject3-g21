@@ -1,20 +1,19 @@
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
+import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -22,12 +21,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import javafx.scene.control.Dialog;
+import java.sql.*;
+
 import javafx.scene.control.ButtonType;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -37,14 +32,22 @@ import javafx.stage.Stage;
 
 
 public class ManagerController {
+    public static String productToUpdate = "";
     @FXML
     public Label totalRevenueLabel;
     @FXML
     public Label totalTaxLabel;
     @FXML
     public Label totalSalesLabel;
+    public HBox addProductBox1;
+    public HBox addProductBox2;
+    public TableColumn<Product, Button> updateStockCOlumn;
+    public TableColumn<Product, Button> deleteProductColumn;
+
     @FXML
-    private TextField addStockField;
+    public TextField addStockField;
+    @FXML
+    public HBox updateBox;
 
     @FXML
     private TableView<Product> inventoryTable;
@@ -97,7 +100,7 @@ public class ManagerController {
     private final ObservableList<Product> productList = FXCollections.observableArrayList();
     private final ObservableList<User> userList = FXCollections.observableArrayList();
 
-    public static class Product {
+    public class Product {
         private final SimpleStringProperty name;
         private final SimpleStringProperty category;
         private final SimpleIntegerProperty stock;
@@ -106,6 +109,7 @@ public class ManagerController {
             this.name = new SimpleStringProperty(name);
             this.category = new SimpleStringProperty(category);
             this.stock = new SimpleIntegerProperty(stock);
+
         }
 
         public String getName() {
@@ -119,6 +123,29 @@ public class ManagerController {
         public int getStock() {
             return stock.get();
         }
+    }
+
+    private void deleteProduct(String s) {
+        String query = "DELETE FROM prices WHERE name = ?;";
+        try(Connection connection = Main.getConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setString(1, s);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void setUpdateBlock() {
+        if(updateBox.isVisible()) {
+            updateBox.setVisible(false);
+            productToUpdate = "";
+        }
+        else{
+            addStockField.setText("");
+            updateBox.setVisible(true);
+        }
+
     }
 
     public static class User {
@@ -141,10 +168,62 @@ public class ManagerController {
 
     @FXML
     public void initialize() {
+        setUpdateBlock();
         // Bind product table columns
         productNameColumn.setCellValueFactory(cellData -> cellData.getValue().name);
         productCategoryColumn.setCellValueFactory(cellData -> cellData.getValue().category);
         productStockColumn.setCellValueFactory(cellData -> cellData.getValue().stock.asObject());
+        updateStockCOlumn.setCellFactory(column -> new TableCell<Product, Button>() {
+            private final Button updateButton = new Button("Update Stock");
+
+            {
+                // Set the button's style or alignment if needed
+                updateButton.setAlignment(Pos.CENTER);
+                updateButton.setOnAction(event -> {
+                    // Get the current product for the row
+                    Product product = getTableView().getItems().get(getIndex());
+                    // Call a method to update stock for the selected product
+                    productToUpdate = product.getName();
+                    setUpdateBlock();
+                });
+            }
+
+            @Override
+            protected void updateItem(Button item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setGraphic(null);
+                } else {
+                    setGraphic(updateButton);
+                }
+                setAlignment(Pos.CENTER);
+            }
+        });
+        deleteProductColumn.setCellFactory(column -> new TableCell<Product, Button>() {
+            private final Button updateButton = new Button("Delete Product");
+
+            {
+                // Set the button's style or alignment if needed
+                updateButton.setAlignment(Pos.CENTER);
+                updateButton.setOnAction(event -> {
+                    // Get the current product for the row
+                    Product product = getTableView().getItems().get(getIndex());
+                    // Call a method to update stock for the selected product
+                    deleteProduct(product.getName());
+                });
+            }
+
+            @Override
+            protected void updateItem(Button item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setGraphic(null);
+                } else {
+                    setGraphic(updateButton);
+                }
+                setAlignment(Pos.CENTER);
+            }
+        });
 
         // Bind user table columns
         employeeNameColumn.setCellValueFactory(cellData -> cellData.getValue().username);
@@ -160,6 +239,8 @@ public class ManagerController {
             userInfoLabel.setText("Welcome" + username);
         }
         refreshDetails();
+        addProductBox1.setVisible(false);
+        addProductBox2.setVisible(false);
     }
 
     private void loadInventoryData() {
@@ -204,13 +285,9 @@ public class ManagerController {
 
     @FXML
     void updateStock(ActionEvent event) {
-        String productName = productNameField.getText();
+        String productName = productToUpdate;
         String additionalStockText = addStockField.getText();
 
-        if (productName == null || productName.isEmpty()) {
-            showAlert(Alert.AlertType.WARNING, "Warning", "Product Name Required", "Please enter a product name.");
-            return;
-        }
 
         if (additionalStockText == null || additionalStockText.isEmpty()) {
             showAlert(Alert.AlertType.WARNING, "Warning", "Stock Quantity Required", "Please enter a stock quantity.");
@@ -229,6 +306,7 @@ public class ManagerController {
                 String query = "UPDATE prices SET stock = stock + ? WHERE name = ?";
                 PreparedStatement preparedStatement = connection.prepareStatement(query);
                 preparedStatement.setInt(1, additionalStock);
+                System.out.println(productName);
                 preparedStatement.setString(2, productName);
 
                 int affectedRows = preparedStatement.executeUpdate();
@@ -236,7 +314,6 @@ public class ManagerController {
                     showAlert(Alert.AlertType.INFORMATION, "Success", "Stock Updated",
                             "Product: " + productName + "\nAdded Stock: " + additionalStock);
                     addStockField.clear();
-                    productNameField.clear();
                     loadInventoryData();
                 } else {
                     showAlert(Alert.AlertType.WARNING, "Warning", "Product Not Found", "No product found with the given name.");
@@ -529,6 +606,22 @@ public class ManagerController {
             File destinationFile = new File("src/photos/" + selectedFile.getName());
             Files.copy(selectedFile.toPath(), destinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
             imageFilePathField.setText("photos/" + selectedFile.getName());
+        }
+    }
+
+    @FXML
+    public void addProduct(){
+        addStockProductNameField.clear();
+        addStockQuantityField.clear();
+        addStockPriceField.clear();
+        imageFilePathField.clear();
+        if(addProductBox1.isVisible()) {
+            addProductBox1.setVisible(false);
+            addProductBox2.setVisible(false);
+        }
+        else{
+            addProductBox1.setVisible(true);
+            addProductBox2.setVisible(true);
         }
     }
 

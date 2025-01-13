@@ -20,26 +20,36 @@
                 <Tab text="Inventory Management">
                     <AnchorPane>
                         <VBox alignment="TOP_LEFT" spacing="15.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
-                            <Label style="-fx-font-size: 24px; -fx-font-weight: bold;" text="Current Stock:" />
+                     <HBox alignment="CENTER_LEFT" spacing="15.0">
+                        <children>
+                           <AnchorPane prefHeight="27.0" prefWidth="1074.0">
+                              <children>
+                                 <Button layoutX="926.0" layoutY="3.0" onAction="#addProduct" style="-fx-font-size: 18px;" text="Add Product" />
+                                        <Label layoutY="10.0" style="-fx-font-size: 24px; -fx-font-weight: bold;" text="Current Stocks:" />
+                              </children>
+                           </AnchorPane>
+                        </children>
+                     </HBox>
                             <TableView fx:id="inventoryTable" VBox.vgrow="ALWAYS">
                                 <columns>
-                                    <TableColumn fx:id="productNameColumn" text="Product Name" />
-                                    <TableColumn fx:id="productCategoryColumn" text="Category" />
-                                    <TableColumn fx:id="productStockColumn" text="Current Stock" />
+                                    <TableColumn fx:id="productNameColumn" prefWidth="110.66668033599854" text="Product Name" />
+                                    <TableColumn fx:id="productCategoryColumn" prefWidth="70.00000762939453" text="Category" />
+                                    <TableColumn fx:id="productStockColumn" prefWidth="115.99996948242188" text="Current Stock" />
+                           <TableColumn fx:id="updateStockCOlumn" prefWidth="184.0" text="Update Stock" />
+                           <TableColumn fx:id="deleteProductColumn" prefWidth="186.00003051757812" text="Delete Product" />
                                 </columns>
                             </TableView>
-                            <HBox alignment="CENTER_LEFT" spacing="15.0">
-                                <TextField fx:id="productNameField" promptText="Product Name" style="-fx-font-size: 18px;" />
+                            <HBox fx:id="updateBox" alignment="CENTER_LEFT" spacing="15.0">
                                 <TextField fx:id="addStockField" promptText="Quantity to Add" style="-fx-font-size: 18px;" />
                                 <Button onAction="#updateStock" style="-fx-font-size: 18px;" text="Update Stock" />
                             </HBox>
-                            <HBox alignment="CENTER_LEFT" spacing="15.0">
+                            <HBox fx:id="addProductBox1" alignment="CENTER_LEFT" spacing="15.0">
                                 <TextField fx:id="addStockProductNameField" promptText="Product Name" style="-fx-font-size: 18px;" />
                                 <TextField fx:id="addStockQuantityField" promptText="Quantity to Add" style="-fx-font-size: 18px;" />
                                 <TextField fx:id="addStockPriceField" promptText="Price" style="-fx-font-size: 18px;" />
-                                <Button onAction="#addStock" style="-fx-font-size: 18px;" text="Add Stock" />
+                                <Button onAction="#addStock" style="-fx-font-size: 18px;" text="Save Product" />
                             </HBox>
-                            <HBox alignment="CENTER_LEFT" spacing="15.0">
+                            <HBox fx:id="addProductBox2" alignment="CENTER_LEFT" spacing="15.0">
                                 <TextField fx:id="imageFilePathField" editable="false" promptText="Image File Path" style="-fx-font-size: 18px;" />
                                 <Button onAction="#selectImageFile" style="-fx-font-size: 18px;" text="Select Image" />
                             </HBox>
