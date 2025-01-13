@@ -20,13 +20,26 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.Locale;
 
+/**
+ * The MovieController class manages the display, search, and selection of movies in the application.
+ * It provides functionalities to search movies by name or genre, display paginated results, and handle user actions like session selection and logging out.
+ */
 public class MovieController {
 
     @FXML
     public AnchorPane anchorPane;
+    
+    /**
+     * List of all available movies.
+     */
     ArrayList<movies> movieList = new ArrayList<>();
+    
+    /**
+     * Filtered list of movies based on search criteria.
+     */
     ArrayList<movies> subList = new ArrayList<>();
 
+    
     @FXML
     private TextField nameField;
 
@@ -40,9 +53,20 @@ public class MovieController {
     @FXML
     private Label name;
 
+    /**
+     * Reference to the CustomerSearch controller.
+     */
     public static CustomerSearch secondController;
 
+    /**
+     * Pagination component for displaying paginated movie results.
+     */
     public Pagination pagination;
+    
+    /**
+     * Initializes the MovieController by setting up data and UI components.
+     * @throws IOException If the FXML file for the customer search cannot be loaded.
+     */
     @FXML
     public void initialize() throws IOException {
 
@@ -79,6 +103,11 @@ public class MovieController {
         name.setText("Welcome " + Main.currentUser.name + " " + Main.currentUser.surname + "!");
     }
 
+     /**
+     * Updates the movie table with paginated data.
+     * @param pageIndex The current page index.
+     * @param itemsPerPage The number of items to display per page.
+     */
     private void updateTableData(int pageIndex, int itemsPerPage) {
         secondController.updateTableData(pageIndex, itemsPerPage);
         movieTilePane.getChildren().clear();
@@ -93,6 +122,9 @@ public class MovieController {
         }
     }
 
+    /**
+     * Handles the search action by filtering movies based on user input.
+     */
     @FXML
     private void Search() {
         String name = nameField.getText().toLowerCase(Locale.ENGLISH);
@@ -109,6 +141,11 @@ public class MovieController {
         updateTableData(0,3);
     }
 
+     /**
+     * Changes the user password and redirects to the password change screen.
+     * @param e The ActionEvent triggered by the change password button.
+     * @throws IOException If the FXML file for the password change screen cannot be loaded.
+     */
     @FXML
     private void changePassword(ActionEvent e) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("passChange.fxml"));
@@ -120,6 +157,11 @@ public class MovieController {
         passChangeCont.stage2 = secondController.stage;
     }
 
+    /**
+     * Logs out the current user and redirects to the login screen.
+     * @param e The ActionEvent triggered by the logout button.
+     * @throws IOException If the FXML file for the login screen cannot be loaded.
+     */
     @FXML
     private void logOut(ActionEvent e) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("login.fxml"));
@@ -132,6 +174,9 @@ public class MovieController {
         secondController = null;
     }
 
+    /**
+     * Loads movie data from the database and populates the movie list.
+     */
     private void loadMovies() {
 
         String query = "SELECT id, movieName, genre, summary, posterLocation FROM movies";
@@ -149,6 +194,11 @@ public class MovieController {
         }
     }
 
+     /**
+     * Filters movies based on genre and name.
+     * @param genre The genre to filter by.
+     * @param name The name to filter by.
+     */
     private void searchMovies(String genre, String name) {
         movieTilePane.getChildren().clear();
         secondController.searchMovies(genre,name);
@@ -164,9 +214,16 @@ public class MovieController {
         }
     }
 
-
-
-
+     /**
+     * Redirects the user to the session selection screen for the selected movie.
+     * @param e The ActionEvent triggered by the select session button.
+     * @param name The name of the movie.
+     * @param genre The genre of the movie.
+     * @param summary The summary of the movie.
+     * @param posterLocation The poster location of the movie.
+     * @param movieId The ID of the movie.
+     * @throws IOException If the FXML file for the session decision screen cannot be loaded.
+     */
     private void addToCart(ActionEvent e,String name, String genre, String summary, String posterLocation, int movieId) throws IOException {
         sessionChooser.movieName = name;
         sessionChooser.genre = genre;
@@ -181,11 +238,39 @@ public class MovieController {
         stage.show();
     }
 
+    /**
+     * The Movies class contains the necessary informations about a movie.
+     */
     public class movies{
+        
+        /**
+         * The name of the movie.
+         */
         String movieName;
+
+        /**
+         * The genre of the movie.
+         */
         String genre;
+
+         /**
+         * The VBox containing the movie's details and image.
+         */
         VBox movieBox;
 
+        /**
+         * Constructs a movie object and initializes its UI components.
+         * 
+         * @param name The name of the movie.
+         * @param genre The genre of the movie.
+         * @param image The image representing the movie poster.
+         * @param posterLocation The file path to the movie poster.
+         * @param id The unique ID of the movie.
+         * @param summary A brief summary of the movie.
+         * @param width The width of the movie poster image.
+         * @param height The height of the movie poster image.
+         * @param button A flag indicating whether to include a "Select Session" button.
+         */
         movies(String name, String genre, Image image, String posterLocation, int id, String summary, int width, int height, boolean button) {
             this.movieName = name;
             this.genre = genre;
