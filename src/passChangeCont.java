@@ -15,22 +15,69 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * Controller class for managing password change functionality.
+ * Handles user interactions for changing their password and navigation between scenes.
+ */
 public class passChangeCont {
+    
+    /**
+     * The current stage for this controller.
+     */
     private Stage stage;
+
+    /**
+     * The current scene for this controller.
+     */
     private Scene scene;
+
+    /**
+     * The root node for the current FXML layout.
+     */
     private Parent root;
+
+    /**
+     * The previous page's FXML file path for navigation.
+     */
     static String prevPage;
     @FXML
+
+     /**
+     * Input field for the old password.
+     */
     PasswordField oldPass;
     @FXML
+
+    /**
+     * Input field for the new password.
+     */
     PasswordField newPass;
+
+     /**
+     * Input field for confirming the new password.
+     */
+    @FXML
     @FXML
     PasswordField newPass2;
+
+     /**
+     * Label to display warning messages.
+     */
+    @FXML
     @FXML
     Label warning;
 
+    /**
+     * A secondary stage that may be managed by this controller.
+     */
     public static Stage stage2;
 
+     /**
+     * Returns to the previous page.
+     *
+     * @param event The event triggered by the user.
+     * @throws IOException If the FXML file cannot be loaded.
+     */
     public void prevMenu(ActionEvent event) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource(prevPage));
         Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
@@ -40,6 +87,12 @@ public class passChangeCont {
         prevPage = null;
     }
 
+    /**
+     * Changes the user's password if valid.
+     * 
+     * @param event The event triggered by the user.
+     * @throws IOException If the FXML file cannot be loaded.
+     */
     public void passChange(ActionEvent event) throws IOException {
         if(stage2 != null)
             stage2.close();
