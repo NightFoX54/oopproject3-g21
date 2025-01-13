@@ -25,16 +25,57 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+/**
+ * The sessionChooser class is responsible for managing the movie session selection process.
+ * It displays the movie details and available sessions to the user and handles navigation
+ * to related screens like seat selection or search.
+ *
+ * <p>Dependencies:</p>
+ * <ul>
+ *     <li>JavaFX components (e.g., TableView, Button, FlowPane, etc.)</li>
+ *     <li>Database connection for fetching session data</li>
+ *     <li>External FXML files for UI transitions</li>
+ * </ul>
+ */
 public class sessionChooser {
+    /**
+     * The name of the movie currently selected.
+     */
     public static String movieName;
+
+    /**
+     * The genre of the movie currently selected.
+     */
     public static String genre;
+
+    /**
+     * A brief summary of the movie.
+     */
     public static String summary;
+
+    /**
+     * The path to the poster image for the movie.
+     */
     public static String posterPath;
+
+    /**
+     * The unique identifier of the movie in the database.
+     */
     public static int movieId;
+
+    /**
+     * A reference to the CustomerSession controller for managing interactions.
+     */
     public static CustomerSession secondController;
 
+    /**
+     * A list of session objects representing the available sessions for the selected movie.
+     */
     ObservableList<session> sessionList = FXCollections.observableArrayList();
 
+    /**
+     * Represents a session with its attributes such as hall name, date, time, and a button for seat selection.
+     */
     public static class session {
         private final SimpleStringProperty hall_name;
         private final SimpleStringProperty schedule_date;
@@ -43,7 +84,16 @@ public class sessionChooser {
         private final SimpleStringProperty available_seats;
         private final SimpleObjectProperty<Button> select_button;
 
-
+         /**
+         * Constructs a session object with the given parameters.
+         *
+         * @param hall_name       The name of the hall where the session is held.
+         * @param schedule_date   The date of the session.
+         * @param start_time      The start time of the session.
+         * @param hall_capacity   The total capacity of the hall.
+         * @param available_seats The number of available seats for the session.
+         * @param select_button   A button to trigger seat selection for this session.
+         */
         public session(String hall_name, String schedule_date, String start_time, String hall_capacity, String available_seats, Button select_button) {
             this.hall_name = new SimpleStringProperty(hall_name);
             this.schedule_date = new SimpleStringProperty(schedule_date);
@@ -53,21 +103,56 @@ public class sessionChooser {
             this.select_button = new SimpleObjectProperty<>(select_button);
         }
 
+        /**
+         * Gets the hall name.
+         * 
+         * @return The name of the hall.
+         */
         public String getHallName() {
             return hall_name.get();
         }
+
+        /**
+         * Gets the schedule date of the session.
+         * 
+         * @return The schedule date.
+         */
         public String getScheduleDate() {
             return schedule_date.get();
         }
+
+        /**
+         * Gets the start time of the session.
+         * 
+         * @return The start time.
+         */
         public String getStartTime() {
             return start_time.get();
         }
+
+        /**
+         * Gets the hall capacity.
+         * 
+         * @return The hall capacity.
+         */
         public String getHallCapacity() {
             return hall_capacity.get();
         }
+
+        /**
+         * Gets the number of available seats.
+         * 
+         * @return The number of available seats.
+         */
         public String getAvailableSeats() {
             return available_seats.get();
         }
+
+        /**
+         * Gets the button for selecting seats.
+         * 
+         * @return The select seats button.
+         */
         public Button getSelectButton() {
             return select_button.get();
         }
@@ -79,6 +164,12 @@ public class sessionChooser {
     private Label name;
     @FXML
     FlowPane sessionFlowPane;
+    /**
+     * Navigates to the password change screen.
+     *
+     * @param e The ActionEvent triggered by the user.
+     * @throws IOException If the FXML file for the password change screen cannot be loaded.
+     */
     @FXML
     private void changePassword(ActionEvent e) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("passChange.fxml"));
@@ -90,6 +181,12 @@ public class sessionChooser {
         passChangeCont.stage2 = secondController.stage;
     }
 
+    /**
+     * Logs out the current user and navigates to the login screen.
+     *
+     * @param e The ActionEvent triggered by the user.
+     * @throws IOException If the FXML file for the login screen cannot be loaded.
+     */
     @FXML
     private void logOut(ActionEvent e) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("login.fxml"));
@@ -102,6 +199,12 @@ public class sessionChooser {
         MovieController.secondController = null;
     }
 
+    /**
+     * Navigates to the search screen.
+     *
+     * @param e The ActionEvent triggered by the user.
+     * @throws IOException If the FXML file for the search screen cannot be loaded.
+     */
     @FXML
     private void goToSearch(ActionEvent e) throws IOException {
         secondController.goToSearch();
@@ -114,6 +217,9 @@ public class sessionChooser {
 
 
 
+    /**
+     * Initializes the session chooser screen by setting up movie details and sessions.
+     */
     @FXML
     public void initialize() {
         name.setText("Welcome " + Main.currentUser.name + " " + Main.currentUser.surname + "!");
@@ -154,6 +260,9 @@ public class sessionChooser {
         showSessions();
     }
 
+    /**
+     * Displays the available sessions for the selected movie and sets up pagination.
+     */
     public void showSessions(){
         TableView<session> sessionTable = createSessionTable(true);
         Pagination pagination = new Pagination();
@@ -232,6 +341,13 @@ public class sessionChooser {
         }
     }
 
+    /**
+     * Updates the data displayed in the session table for the given page index.
+     *
+     * @param pageIndex     The index of the page to display.
+     * @param sessionTable  The TableView to update.
+     * @param itemsPerPage  The number of items to display per page.
+     */
     private void updateTableData(int pageIndex, TableView<session> sessionTable, int itemsPerPage) {
         int fromIndex = pageIndex * itemsPerPage;
         int toIndex = Math.min(fromIndex + itemsPerPage, sessionList.size());
@@ -243,6 +359,12 @@ public class sessionChooser {
         sessionTable.setItems(pageData);
     }
 
+    /**
+     * Creates a TableView for displaying session data.
+     *
+     * @param includeButton Whether to include the "Select Seats" button column.
+     * @return A configured TableView for session data.
+     */
     private TableView<session> createSessionTable(boolean includeButton) {
         TableView<session> sessionTable = new TableView<>();
 
@@ -315,6 +437,12 @@ public class sessionChooser {
     }
 
 
+    /**
+     * Creates a cell factory for aligning cell content to the center.
+     *
+     * @param <T> The type of data in the table column.
+     * @return A Callback for creating TableCell instances with center alignment.
+     */
     private <T> Callback<TableColumn<session, T>, TableCell<session, T>> createCenterAlignedCellFactory() {
         return column -> new TableCell<session, T>() {
             @Override
