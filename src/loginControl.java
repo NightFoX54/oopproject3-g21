@@ -11,18 +11,52 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
+/**
+ * Handles the login functionality for the application.
+ * Verifies user credentials and redirects to the appropriate page based on the user's role.
+ */
 public class loginControl {
 
+    /**
+     * The current stage for managing scenes.
+     */
     private Stage stage;
+
+    /**
+     * The current scene for the application.
+     */
     private Scene scene;
+
+    /**
+     * The root node for the current FXML layout.
+     */
     private Parent root;
+
+     /**
+     * Input field for the username.
+     */
     @FXML
     TextField username;
+
+     /**
+     * Input field for the password.
+     */
     @FXML
     PasswordField password;
+
+     /**
+     * Label for displaying warning messages.
+     */
     @FXML
     Label warning;
 
+    /**
+     * Verifies the user's login credentials and redirects to the appropriate page based on their role.
+     * Displays a warning if the credentials are invalid.
+     *
+     * @param event The event triggered by the login button.
+     * @throws IOException If an error occurs while loading the FXML file.
+     */
     @FXML
     private void loginControl(ActionEvent event) throws IOException {
         String username = this.username.getText();
