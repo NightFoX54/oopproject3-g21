@@ -16,7 +16,7 @@
 
 <AnchorPane prefHeight="800.0" prefWidth="1200.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="adminController">
    <children>
-      <Label fx:id="userInfoLabel" layoutX="10.0" layoutY="10.0" style="-fx-font-size: 18px; -fx-font-weight: bold;" text="Username:" />
+      <Label fx:id="userInfoLabel" layoutX="10.0" layoutY="10.0" style="-fx-font-size: 18px; -fx-font-weight: bold;" text="Welcome " />
       <VBox alignment="TOP_CENTER" spacing="20.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="50.0">
          <children>
             <Label alignment="CENTER" style="-fx-font-size: 36px; -fx-font-weight: bold;" text="Admin Panel" />

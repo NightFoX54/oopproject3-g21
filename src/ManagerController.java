@@ -1,5 +1,4 @@
 import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -11,7 +10,6 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -25,10 +23,6 @@ import java.sql.*;
 
 import javafx.scene.control.ButtonType;
 import javafx.stage.FileChooser;
-import javafx.stage.Stage;
-
-
-
 
 
 public class ManagerController {
@@ -48,6 +42,17 @@ public class ManagerController {
     public TextField addStockField;
     @FXML
     public HBox updateBox;
+    ObservableList<prices> pricesList = FXCollections.observableArrayList();
+    @FXML
+    public TableView<prices> pricesTable;
+    @FXML
+    public TableColumn<prices,String> priceNameColumn;
+    @FXML
+    public TableColumn<prices,Integer> pricePriceColumn;
+    @FXML
+    public TableColumn<prices,Button> priceUpdateColumn;
+    @FXML
+    public TableColumn<prices,Spinner<Integer>> priceNewPriceColumn;
 
     @FXML
     private TableView<Product> inventoryTable;
@@ -77,7 +82,7 @@ public class ManagerController {
     private TextField newPriceField;
 
     @FXML
-    private TextField ticketPriceField;
+    private Spinner<Integer> ticketPriceField;
 
     @FXML
     private TextField updateProductNameField;
@@ -168,6 +173,26 @@ public class ManagerController {
 
     @FXML
     public void initialize() {
+        setPricesTable();
+        fillPricesTable();
+        int discountPercentage = 0;
+        String query = "SELECT * FROM discounts";
+        try(Connection connection = Main.getConnection();
+        Statement statement = connection.createStatement();
+        ResultSet resultSet = statement.executeQuery(query)) {
+            resultSet.next();
+            discountPercentage = resultSet.getInt("percentage");
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        ticketPriceField.getEditor().textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue.matches("\\d*")) { // Regex to allow only digits
+                ticketPriceField.getEditor().setText(newValue.replaceAll("[^\\d]", ""));
+            }
+        });
+        ticketPriceField.setEditable(true);
+        SpinnerValueFactory<Integer> discountValueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, discountPercentage);
+        ticketPriceField.setValueFactory(discountValueFactory);
         setUpdateBlock();
         // Bind product table columns
         productNameColumn.setCellValueFactory(cellData -> cellData.getValue().name);
@@ -234,13 +259,26 @@ public class ManagerController {
         loadUserData();
 
         if (Main.currentUser != null) {
-            String username = Main.currentUser.getName();
-            String role = Main.currentUser.getRole();
-            userInfoLabel.setText("Welcome" + username);
+            userInfoLabel.setText("Welcome " + Main.currentUser.name + " " + Main.currentUser.surname +"!");
         }
         refreshDetails();
         addProductBox1.setVisible(false);
         addProductBox2.setVisible(false);
+    }
+
+    private void fillPricesTable() {
+        pricesTable.getItems().clear();
+        String query = "SELECT * FROM prices";
+        try(Connection connection = Main.getConnection();
+        Statement statement = connection.createStatement();
+        ResultSet resultSet = statement.executeQuery(query)) {
+            while(resultSet.next()) {
+                pricesList.add(new prices(resultSet.getString(2), resultSet.getInt(3)));
+            }
+            pricesTable.setItems(pricesList);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void loadInventoryData() {
@@ -273,6 +311,7 @@ public class ManagerController {
             ResultSet resultSet = statement.executeQuery();
 
             while (resultSet.next()) {
+                if(!resultSet.getString("username").equals(Main.currentUser.getUsername()))
                 userList.add(new User(
                         resultSet.getString("username"),
                         resultSet.getString("role")));
@@ -373,49 +412,39 @@ public class ManagerController {
     }
 
     @FXML
-    void updateTicketPrice(ActionEvent event) {
+    void updateAgeBasedDiscount(ActionEvent event) {
         // Kullanıcının girdiği değeri al
-        String newTicketPriceText = ticketPriceField.getText();
-    
-        // Girdi boş mu veya null mı kontrol et
-        if (newTicketPriceText == null || newTicketPriceText.trim().isEmpty()) {
-            showAlert(Alert.AlertType.WARNING, "Warning", "Ticket Price Required", "Please enter a new ticket price.");
-            return;
-        }
+        String newTicketPriceText = String.valueOf(ticketPriceField.getValue());
+
     
         try {
             // Girilen fiyatı double olarak dönüştür
-            double newTicketPrice = Double.parseDouble(newTicketPriceText.trim());
+            double newDicountPercentage = Double.parseDouble(newTicketPriceText.trim());
     
             // Negatif fiyat kontrolü
-            if (newTicketPrice < 0) {
+            if (newDicountPercentage < 0) {
                 showAlert(Alert.AlertType.ERROR, "Error", "Invalid Price", "Please enter a positive value for the ticket price.");
                 return;
             }
     
             // Database bağlantısı ve güncelleme işlemi
             try (Connection connection = Main.getConnection()) {
-                String query = "UPDATE prices SET price = ? WHERE name = ?";
+                String query = "UPDATE discounts SET percentage = ? WHERE name = 'age_discount'";
                 PreparedStatement preparedStatement = connection.prepareStatement(query);
-                preparedStatement.setDouble(1, newTicketPrice);
-                preparedStatement.setString(2, "tickets"); // String parametreyi ekle
+                preparedStatement.setDouble(1, newDicountPercentage);
     
                 int affectedRows = preparedStatement.executeUpdate();
     
                 // Güncelleme başarılı mı kontrol et
                 if (affectedRows > 0) {
-                    showAlert(Alert.AlertType.INFORMATION, "Success", "Ticket Price Updated",
-                            "New Ticket Price: $" + String.format("%.2f", newTicketPrice));
-                    ticketPriceField.clear();
-                } else {
-                    showAlert(Alert.AlertType.WARNING, "Warning", "Operation Failed",
-                            "No ticket price was updated. Please check if the record exists.");
+                    showAlert(Alert.AlertType.INFORMATION, "Success", "Age Based Discount Updated",
+                            "New Age Based Discount: " + newDicountPercentage + "%");
                 }
             }
         } catch (NumberFormatException e) {
-            showAlert(Alert.AlertType.ERROR, "Error", "Invalid Input", "Please enter a valid number for the ticket price.");
+            showAlert(Alert.AlertType.ERROR, "Error", "Invalid Input", "Please enter a valid number for the age based discount.");
         } catch (SQLException e) {
-            showAlert(Alert.AlertType.ERROR, "Error", "Database Error", "An error occurred while updating the ticket price:\n" + e.getMessage());
+            showAlert(Alert.AlertType.ERROR, "Error", "Database Error", "An error occurred while updating the age based discount:\n" + e.getMessage());
         }
     }
     
@@ -657,11 +686,115 @@ public class ManagerController {
         Main.currentUser = null;
     }
 
+    public void setPricesTable(){
+        priceNameColumn.setCellValueFactory(cellData -> cellData.getValue().name);
+        pricePriceColumn.setCellValueFactory(new PropertyValueFactory<>("price"));
+        priceNewPriceColumn.setCellFactory(column -> new TableCell<prices, Spinner<Integer>>() {
+            private final Spinner<Integer> priceSpinner = new Spinner<>(0, Integer.MAX_VALUE, 0);
+
+            {
+                priceSpinner.setEditable(true);
+
+                // Listen for changes in the spinner and update the Product object
+                priceSpinner.getEditor().textProperty().addListener((obs, oldValue, newValue) -> {
+                    prices prices = getTableView().getItems().get(getIndex());
+                    if (prices != null) {
+                        prices.setPriceVariable(Integer.valueOf(newValue)); // Assume Product has a setStock method
+                    }
+                    if (!newValue.matches("\\d*")) { // Regex to allow only digits
+                        ticketPriceField.getEditor().setText(newValue.replaceAll("[^\\d]", ""));
+                    }
+                });
+
+            }
+            @Override
+            protected void updateItem(Spinner<Integer> item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setGraphic(null);
+                } else {
+                    setGraphic(priceSpinner);
+                }
+                setAlignment(Pos.CENTER);
+            }
+        });
+        priceUpdateColumn.setCellFactory(column -> new TableCell<prices, Button>() {
+            private final Button updateButton = new Button("Update Price");
+
+            {
+                // Set the button's style or alignment if needed
+                updateButton.setAlignment(Pos.CENTER);
+                updateButton.setOnAction(event -> {
+                    // Get the current product for the row
+                    prices prices = getTableView().getItems().get(getIndex());
+                    // Call a method to update stock for the selected product
+                    updateProductPrice(prices.getName(),prices.getNewPrice());
+                    fillPricesTable();
+                });
+            }
+
+            @Override
+            protected void updateItem(Button item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setGraphic(null);
+                } else {
+                    setGraphic(updateButton);
+                }
+                setAlignment(Pos.CENTER);
+            }
+        });
+
+    }
+
+    private void updateProductPrice(String name, Integer newPrice) {
+        String query = "UPDATE prices SET price = ? WHERE name = ?";
+        try(Connection connection = Main.getConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setDouble(1, newPrice);
+            preparedStatement.setString(2, name);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private void showAlert(Alert.AlertType type, String title, String header, String content) {
         Alert alert = new Alert(type);
         alert.setTitle(title);
         alert.setHeaderText(header);
         alert.setContentText(content);
         alert.showAndWait();
+    }
+
+    public class prices {
+        private final SimpleStringProperty name;
+        private final SimpleIntegerProperty price;
+        private final SimpleIntegerProperty newPrice;
+
+        prices(String name, Integer price) {
+            this.name = new SimpleStringProperty(name);
+            this.price = new SimpleIntegerProperty(price);
+            this.newPrice = new SimpleIntegerProperty(0);
+        }
+        public String getName() {
+            return name.get();
+        }
+        public void setName(String name) {
+            this.name.set(name);
+        }
+
+        public void setPriceVariable(Integer newValue) {
+            newPrice.set(newValue);
+        }
+        public Integer getPrice() {
+            return price.get();
+        }
+        public void setPrice(Integer price) {
+            this.price.set(price);
+        }
+        public Integer getNewPrice() {
+            return newPrice.get();
+        }
     }
 }

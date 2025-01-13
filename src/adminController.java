@@ -158,6 +158,7 @@ public class adminController {
 
     @FXML
     public void initialize() {
+        userInfoLabel.setText("Welcome " + Main.currentUser.name + " " + Main.currentUser.surname + "!");
         seatTable.setVisible(false);
         extrasTable.setVisible(false);
         warningLabel.setVisible(false);

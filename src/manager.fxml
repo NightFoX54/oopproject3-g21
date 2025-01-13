@@ -2,6 +2,7 @@
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TableColumn?>
@@ -62,15 +63,14 @@
                             <Label style="-fx-font-size: 24px; -fx-font-weight: bold;" text="Employee List:" />
                             <TableView fx:id="personnelTable" VBox.vgrow="ALWAYS">
                                 <columns>
-                                    <TableColumn fx:id="employeeNameColumn" text="Name" />
+                                    <TableColumn fx:id="employeeNameColumn" text="Username" />
                                     <TableColumn fx:id="employeeRoleColumn" text="Role" />
                                 </columns>
                             </TableView>
                             <HBox alignment="CENTER_LEFT" spacing="15.0">
-                                <Button style="-fx-font-size: 18px;" text="Update Details" />
+                               <Button onAction="#hireEmployeePopup" style="-fx-background-color: lightgreen; -fx-font-size: 18px;" text="Hire New Employee" />
                                 <Button onAction="#fireEmployee" style="-fx-font-size: 18px;" text="Fire Employee" />
                             </HBox>
-                            <Button onAction="#hireEmployeePopup" style="-fx-background-color: lightgreen; -fx-font-size: 18px;" text="Hire New Employee" />
                         </VBox>
                     </AnchorPane>
                 </Tab>
@@ -78,14 +78,18 @@
                     <AnchorPane>
                         <VBox alignment="TOP_LEFT" spacing="15.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
                             <Label style="-fx-font-size: 24px; -fx-font-weight: bold;" text="Update Prices:" />
+                     <TableView fx:id="pricesTable" prefHeight="319.0" prefWidth="1137.0">
+                       <columns>
+                         <TableColumn fx:id="priceNameColumn" prefWidth="117.33333683013916" text="Name" />
+                         <TableColumn fx:id="pricePriceColumn" minWidth="0.0" prefWidth="117.33338928222656" text="Price" />
+                           <TableColumn fx:id="priceNewPriceColumn" minWidth="0.0" prefWidth="163.3332977294922" text="New Price" />
+                           <TableColumn fx:id="priceUpdateColumn" minWidth="0.0" prefWidth="206.66668701171875" text="Update" />
+                       </columns>
+                     </TableView>
                             <HBox alignment="CENTER_LEFT" spacing="15.0">
-                                <TextField fx:id="updateProductNameField" promptText="Product Name" style="-fx-font-size: 18px;" />
-                                <TextField fx:id="newPriceField" promptText="New Price" style="-fx-font-size: 18px;" />
-                                <Button onAction="#updatePrice" style="-fx-font-size: 18px;" text="Update Price" />
-                            </HBox>
-                            <HBox alignment="CENTER_LEFT" spacing="15.0">
-                                <TextField fx:id="ticketPriceField" promptText="New Ticket Price" style="-fx-font-size: 18px;" />
-                                <Button onAction="#updateTicketPrice" style="-fx-font-size: 18px;" text="Update Ticket Price" />
+                        <Label style="-fx-font-size: 18; -fx-font-weight: bold;" text="Age Based Discount Percentage:" />
+                        <Spinner fx:id="ticketPriceField" />
+                                <Button onAction="#updateAgeBasedDiscount" style="-fx-font-size: 18px;" text="Update Age Based Discount" />
                             </HBox>
                         </VBox>
                     </AnchorPane>
