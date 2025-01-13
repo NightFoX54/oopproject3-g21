@@ -25,31 +25,100 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+* Seat selection process for a movie.
+* contains information about movies, session dates and seats.
+*/
 public class seatSelection {
 
+    /**
+    * A VBox for displaying movie-related content
+    */
     public static VBox movieBox;
+    
+    /**
+    * list of selected seats.
+    */
     public static ArrayList<String> selectedSeats = new ArrayList<>();
+
+    /**
+    * Numbers of rows in seating.
+    */
     public static int rows;
+    
+    /**
+    * Numbers of columns in seating.
+    */
     public static int cols;
+
+    /**
+    * ID of the current session.
+    */
     public static int session_id = 1;
+
+    /**
+    * Path to the poster image.
+    */
     public static String posterPath;
+
+    /**
+    * Name of the movie hall.
+    */
     public static String hallName;
+
+    /**
+    * Session date of the movie.
+    *//
     public static String sessionDate;
+
+    /**
+    * Session time of the movie.
+    *//
     public static String sessionTime;
+
+    /**
+    * Name of the movie
+    */
     public static String movieName;
+
+    /**
+    * Secondary controller for managing seat selection
+    */
     public static CustomerSeat secondController;
+
+     /**
+     * Label to display the movie name.
+     */
     @FXML
     Label name;
+
+     /**
+     * Main container for the seat selection interface.
+     */
     @FXML
     private AnchorPane pane;
+
+      /**
+     * TilePane for displaying movie tiles.
+     */
     @FXML
     TilePane movieTile;
+
+     /**
+     * Label to represent the screen in the UI.
+     */
     @FXML
     Label screen;
-
+    
+     /**
+     * Label to display warning messages to the user.
+     */
     @FXML
     Label warningMessage;
 
+     /**
+     * Displays movie details such as title, hall, date, and time in the UI.
+     */
     public void movieDetails(){
         Label titleLabel = new Label("Title: " + movieName);
         titleLabel.getStyleClass().add("no-hover");
@@ -75,6 +144,9 @@ public class seatSelection {
         }
     }
 
+     /**
+     * Initializes the seat selection interface, setting up the seating grid and styles.
+     */
     @FXML
     public void initialize() {
 
@@ -173,6 +245,11 @@ public class seatSelection {
         pane.getChildren().add(grid);
     }
 
+     /**
+     * Retrieves a set of sold seats from the database for the current session.
+     * 
+     * @return A set of sold seat identifiers.
+     */
     private Set<String> soldSeats(){
         Set<String> soldSeats = new HashSet<>();
         String query = "SELECT * FROM sold_seats WHERE schedule_id = " + session_id;
@@ -191,6 +268,12 @@ public class seatSelection {
         return soldSeats;
     }
 
+      /**
+     * Navigates to the password change page.
+     * 
+     * @param e The action event triggered by the user.
+     * @throws IOException If the FXML file cannot be loaded.
+     */
     @FXML
     private void changePassword(ActionEvent e) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("passChange.fxml"));
@@ -202,6 +285,12 @@ public class seatSelection {
         passChangeCont.stage2 = secondController.stage;
     }
 
+    /**
+     * Logs out the current user and navigates to the login page.
+     * 
+     * @param e The action event triggered by the user.
+     * @throws IOException If the FXML file cannot be loaded.
+     */
     @FXML
     private void logOut(ActionEvent e) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("login.fxml"));
@@ -216,6 +305,12 @@ public class seatSelection {
         
     }
 
+     /**
+     * Navigates to the movie search page.
+     * 
+     * @param e The action event triggered by the user.
+     * @throws IOException If the FXML file cannot be loaded.
+     */
     @FXML
     private void goToSearch(ActionEvent e) throws IOException {
         secondController.goToSearch();
@@ -228,6 +323,12 @@ public class seatSelection {
 
     }
 
+    /**
+     * Navigates to the session selection page.
+     * 
+     * @param e The action event triggered by the user.
+     * @throws IOException If the FXML file cannot be loaded.
+     */
     @FXML
     private void goToSession(ActionEvent e) throws IOException {
         selectedSeats = new ArrayList<>();
@@ -254,6 +355,13 @@ public class seatSelection {
 
     }
 
+    /**
+     * Confirms the user's seat selection and navigates to the age confirmation page.
+     * Displays a warning if no seats are selected.
+     * 
+     * @param e The action event triggered by the user.
+     * @throws IOException If the FXML file cannot be loaded.
+     */
     @FXML
     private void confirmSelection(ActionEvent e) throws IOException {
         if(!selectedSeats.isEmpty()) {
