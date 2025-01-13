@@ -43,12 +43,40 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Manages age confirmation, seat selection, and extras purchase for a movie booking system.
+ * Includes functionality for generating invoices and tickets, as well as processing payments.
+ */
 public class ageConfirmation {
+
+    /**
+     * List of selected seats.
+     */
     public static ArrayList<String> selectedSeats = new ArrayList<String>();
+
+      /**
+     * List of seats to sell, including customer details and pricing information.
+     */
     public static ArrayList<SeatInfo> seatsToSell;
+
+      /**
+     * List of purchased extras.
+     */
     public static ArrayList<extrasInfo> soldExtras;
+
+       /**
+     * Total tax for the current transaction.
+     */
     public static double total_tax = 0.0;
+
+      /**
+     * Tax rate for tickets.
+     */
     public static double ticketTax = 0.2;
+
+     /**
+     * Tax rate for extras.
+     */
     public static double extrasTax = 0.1;
     public static DecimalFormat df = new DecimalFormat("#.##");
     public static CustomerCart secondController = new CustomerCart();
@@ -72,6 +100,10 @@ public class ageConfirmation {
     public Button buttons1;
     @FXML
     Label totalPrice;
+
+     /**
+     * Total price for the transaction.
+     */
     public static double total_price = 0.0;
 
     private int confirmed = 0;
@@ -91,6 +123,11 @@ public class ageConfirmation {
     AnchorPane mainPane;
     @FXML
     Label name;
+
+     /**
+     * Initializes the age confirmation page, setting up movie details, selected seats, and extras.
+     * Configures the UI elements, calculates initial prices, and prepares for user interactions.
+     */
     @FXML
     public void initialize() {
         confirmed = 0;
@@ -329,6 +366,13 @@ public class ageConfirmation {
         agePane.getChildren().add(mainBox);
     }
 
+    /**
+     * Confirms the selected seats and ensures all required customer details are entered.
+     * Adds a payment button if all selections are confirmed and validated.
+     *
+     * @throws FileNotFoundException If resources for generating ticket files are missing.
+     * @throws MalformedURLException If the poster path is invalid or malformed.
+     */
     @FXML
     public void confirm() throws FileNotFoundException, MalformedURLException {
         if(selectedSeats.size() == seatsToSell.size()) {
@@ -350,7 +394,12 @@ public class ageConfirmation {
         }
     }
 
-
+ /**
+     * Navigates to the password change page, allowing the user to update their password.
+     *
+     * @param e The action event triggered by the user.
+     * @throws IOException If the FXML file for the password change page cannot be loaded.
+     */
     @FXML
     private void changePassword(ActionEvent e) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("passChange.fxml"));
@@ -362,7 +411,12 @@ public class ageConfirmation {
         passChangeCont.stage2 = secondController.stage;
     }
 
-
+ /**
+     * Logs out the current user and navigates to the login page.
+     *
+     * @param e The action event triggered by the user.
+     * @throws IOException If the login page FXML file cannot be loaded.
+     */
     @FXML
     private void logOut(ActionEvent e) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("login.fxml"));
@@ -374,6 +428,12 @@ public class ageConfirmation {
         secondController.stage.close();
     }
 
+     /**
+     * Navigates to the movie search page.
+     *
+     * @param e The action event triggered by the user.
+     * @throws IOException If the movie search page FXML file cannot be loaded.
+     */
     @FXML
     private void goToSearch(ActionEvent e) throws IOException {
         secondController.goToSearch();
@@ -385,6 +445,12 @@ public class ageConfirmation {
 
     }
 
+     /**
+     * Navigates to the session selection page.
+     *
+     * @param e The action event triggered by the user.
+     * @throws IOException If the session selection page FXML file cannot be loaded.
+     */
     @FXML
     private void goToSession(ActionEvent e) throws IOException {
         secondController.goToSession();
@@ -396,6 +462,12 @@ public class ageConfirmation {
 
     }
 
+     /**
+     * Navigates back to the seat selection page, reloading the seat data and UI.
+     *
+     * @param e The action event triggered by the user.
+     * @throws IOException If the seat selection page FXML file cannot be loaded.
+     */
     @FXML
     private void goToSeatSelection(ActionEvent e) throws IOException {
         secondController.goToSeat();
@@ -408,6 +480,12 @@ public class ageConfirmation {
 
     }
 
+     /**
+     * Completes the session and navigates back to the main movie selection page.
+     *
+     * @param e The action event triggered by the user.
+     * @throws IOException If the main movie selection page FXML file cannot be loaded.
+     */
     private void finishSession(ActionEvent e) throws IOException {
         secondController.finishSession();
         Parent root = FXMLLoader.load(getClass().getResource("sinema.fxml"));
@@ -418,6 +496,14 @@ public class ageConfirmation {
 
     }
 
+    /**
+     * Generates a ticket PDF for the booking, including seat details and customer information.
+     *
+     * @param ticketNo The unique ticket number for the booking.
+     * @param date     The date of the ticket.
+     * @throws FileNotFoundException If the file for the ticket cannot be created.
+     * @throws MalformedURLException If the poster path for the movie is invalid.
+     */
     private void createTicket(String ticketNo, String date) throws FileNotFoundException, MalformedURLException {
         Paragraph space = new Paragraph("\n");
         String path = "ticket.pdf";
@@ -509,6 +595,14 @@ public class ageConfirmation {
         document.close();
     }
 
+     /**
+     * Generates an invoice PDF for the booking, summarizing all purchases and taxes.
+     *
+     * @param date      The date of the invoice.
+     * @param invoiceNo The unique invoice number for the booking.
+     * @throws FileNotFoundException If the file for the invoice cannot be created.
+     * @throws MalformedURLException If the paths for resources in the invoice are invalid.
+     */
     private void createInvoice(String date, String invoiceNo) throws FileNotFoundException, MalformedURLException {
         Paragraph space = new Paragraph("\n");
         String path = "invoice.pdf";
@@ -615,6 +709,10 @@ public class ageConfirmation {
         document.close();
     }
 
+    /**
+     * Adds a payment button to the UI, allowing the user to confirm their purchase.
+     * Processes payment logic and updates the transaction status upon user confirmation.
+     */
     public void addPaymentButton(){
         Button payButton = new Button("Approve the Payment");
         payButton.setOnAction(e -> {
