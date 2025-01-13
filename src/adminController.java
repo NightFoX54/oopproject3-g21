@@ -729,6 +729,10 @@ public class adminController {
 
     @FXML
     public void showInvoice(){
+        returnAmount.setText("Return Amount: 0,00");
+        returnTaxAmount.setText("Return Tax Amount: 0,00");
+        price = 0;
+        tax = 0;
         String query = "SELECT sell_id FROM completed_sells";
         ObservableList<String> sells = FXCollections.observableArrayList();
         try(Connection connection = Main.getConnection();
@@ -746,8 +750,7 @@ public class adminController {
                     returnAmount.setVisible(true);
                     returnTaxAmount.setVisible(true);
                     confirmReturnButton.setVisible(true);
-                    price = 0;
-                    tax = 0;
+
                 }
                 else{
                     warningLabel.setVisible(true);
@@ -780,6 +783,7 @@ public class adminController {
                 "    ss.customer_age,\n" +
                 "    d.percentage AS age_discount,\n" +
                 "    ss.seat_id\n" +
+                "    p.price\n" +
                 "FROM \n" +
                 "    sold_seats ss\n" +
                 "LEFT JOIN \n" +
@@ -788,6 +792,8 @@ public class adminController {
                 "    movies m ON s.movie_id = m.id\n" +
                 "LEFT JOIN \n" +
                 "    discounts d ON d.name = 'age_discount'\n" +
+                "LEFT JOIN \n" +
+                "    prices p ON p.name = 'ticket' \n" +
                 "WHERE \n" +
                 "    ss.sell_id = ?;";
         try(Connection connection = Main.getConnection();
@@ -796,7 +802,7 @@ public class adminController {
             ResultSet resultSet = preparedStatement.executeQuery();
             while(resultSet.next()){
                 if(resultSet.getString("schedule_id") != null){
-                    seats.add(new seatInfo(resultSet.getString(1),resultSet.getString(4), resultSet.getString(2), resultSet.getString(3), resultSet.getString(6), resultSet.getString(5), resultSet.getInt(7), resultSet.getInt(8),resultSet.getInt(9)));
+                    seats.add(new seatInfo(resultSet.getString(1),resultSet.getString(4), resultSet.getString(2), resultSet.getString(3), resultSet.getString(6), resultSet.getString(5), resultSet.getInt(7), resultSet.getInt(8),resultSet.getInt(9),resultSet.getDouble(10)));
                     seatTable.setVisible(true);
                 }
                 else{
@@ -876,17 +882,17 @@ public class adminController {
             preparedStatement4.setString(3, invoiceIdChooser.getText());
             preparedStatement4.executeUpdate();
             seatTable.setVisible(false);
-            seatTable.setManaged(false);
+
             extrasTable.setVisible(false);
-            extrasTable.setManaged(false);
+
             returnAmount.setVisible(false);
-            returnAmount.setManaged(false);
+
             returnTaxAmount.setVisible(false);
-            returnTaxAmount.setManaged(false);
+
             confirmReturnButton.setVisible(false);
-            confirmReturnButton.setManaged(false);
+
             warningLabel.setVisible(false);
-            warningLabel.setManaged(false);
+
             invoiceIdChooser.setText("");
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -1017,7 +1023,7 @@ public class adminController {
         private final SimpleObjectProperty<CheckBox> cancel;
 
         public seatInfo(String sessionId, String movieName, String scheduleDate, String scheduleTime,
-                        String seatHolderName, String seatNumber, int ageDiscount, int discount, int seatId) {
+                        String seatHolderName, String seatNumber, int ageDiscount, int discount, int seatId, double ticketPrice) {
             this.seatId = seatId;
             this.sessionId = new SimpleStringProperty(sessionId);
             this.movieName = new SimpleStringProperty(movieName);
@@ -1035,22 +1041,22 @@ public class adminController {
             checkBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
                 if(newValue){
                     if(getAgeDiscount().equals("YES")){
-                        price += (double)100 * (1 - (double)discount / 100) * 1.2;
-                        tax +=  (double)100 * (1 - (double)discount / 100) * 0.2;
+                        price += (double)ticketPrice * (1 - (double)discount / 100) * 1.2;
+                        tax +=  (double)ticketPrice * (1 - (double)discount / 100) * 0.2;
                     }
                     else{
-                        price += (double)100  * 1.2;
-                        tax +=  (double)100  * 0.2;
+                        price += (double)ticketPrice  * 1.2;
+                        tax +=  (double)ticketPrice  * 0.2;
                     }
                 }
                 else{
                     if(getAgeDiscount().equals("YES")){
-                        price -= (double)100 * (1 - (double)discount /100) * 1.2;
-                        tax -=  (double)100 * (1 - (double)discount /100) * 0.2;
+                        price -= (double)ticketPrice * (1 - (double)discount /100) * 1.2;
+                        tax -=  (double)ticketPrice * (1 - (double)discount /100) * 0.2;
                     }
                     else{
-                        price -= (double)100  * 1.2;
-                        tax -=  (double)100  * 0.2;
+                        price -= (double)ticketPrice  * 1.2;
+                        tax -=  (double)ticketPrice  * 0.2;
                     }
                 }
                 returnAmount.setText("Return Amount: " + String.format("%.2f", price));
