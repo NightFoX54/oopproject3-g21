@@ -25,7 +25,15 @@ import javafx.scene.control.ButtonType;
 import javafx.stage.FileChooser;
 
 
+/**
+ * The ManagerController class handles the management functionalities for the application.
+ * This includes managing products, employees, pricing, inventory, and discounts.
+ */
 public class ManagerController {
+
+    /**
+     * Stores the name of the product to update.
+     */
     public static String productToUpdate = "";
     @FXML
     public Label totalRevenueLabel;
@@ -105,11 +113,20 @@ public class ManagerController {
     private final ObservableList<Product> productList = FXCollections.observableArrayList();
     private final ObservableList<User> userList = FXCollections.observableArrayList();
 
+    /**
+     * Represents a product with a name, category, and stock quantity.
+     */
     public class Product {
         private final SimpleStringProperty name;
         private final SimpleStringProperty category;
         private final SimpleIntegerProperty stock;
 
+        /**
+         * Constructs a Product object.
+         * @param name The name of the product.
+         * @param category The category of the product.
+         * @param stock The stock quantity of the product.
+         */
         public Product(String name, String category, int stock) {
             this.name = new SimpleStringProperty(name);
             this.category = new SimpleStringProperty(category);
@@ -130,6 +147,10 @@ public class ManagerController {
         }
     }
 
+     /**
+     * Deletes a product from the database by name.
+     * @param productName The name of the product to delete.
+     */
     private void deleteProduct(String s) {
         String query = "DELETE FROM prices WHERE name = ?;";
         try(Connection connection = Main.getConnection();
@@ -141,6 +162,9 @@ public class ManagerController {
         }
     }
 
+    /**
+     * Toggles the visibility of the stock update block.
+     */
     private void setUpdateBlock() {
         if(updateBox.isVisible()) {
             updateBox.setVisible(false);
@@ -153,10 +177,18 @@ public class ManagerController {
 
     }
 
+     /**
+     * Represents a user with a username and role.
+     */
     public static class User {
         private final SimpleStringProperty username;
         private final SimpleStringProperty role;
 
+         /**
+         * Constructs a User object.
+         * @param username The username of the user.
+         * @param role The role of the user.
+         */
         public User(String username, String role) {
             this.username = new SimpleStringProperty(username);
             this.role = new SimpleStringProperty(role);
@@ -171,6 +203,9 @@ public class ManagerController {
         }
     }
 
+    /**
+     * Initializes the manager dashboard, including setting up tables and loading data.
+     */
     @FXML
     public void initialize() {
         setPricesTable();
@@ -224,6 +259,11 @@ public class ManagerController {
                 setAlignment(Pos.CENTER);
             }
         });
+
+        /**
+         * Configures the delete button in the deleteProductColumn.
+         * When clicked, it deletes the selected product from the inventory.
+         */
         deleteProductColumn.setCellFactory(column -> new TableCell<Product, Button>() {
             private final Button updateButton = new Button("Delete Product");
 
@@ -249,23 +289,35 @@ public class ManagerController {
                 setAlignment(Pos.CENTER);
             }
         });
-
-        // Bind user table columns
+        
+        /**
+         * Binds data to the user table columns and initializes user-related UI elements.
+         */
         employeeNameColumn.setCellValueFactory(cellData -> cellData.getValue().username);
         employeeRoleColumn.setCellValueFactory(cellData -> cellData.getValue().role);
 
-        // Load data
+
+        /**
+         * Loads the inventory and user data into their respective tables.
+         */
         loadInventoryData();
         loadUserData();
 
         if (Main.currentUser != null) {
             userInfoLabel.setText("Welcome " + Main.currentUser.name + " " + Main.currentUser.surname +"!");
         }
+
+        /**
+         * Updates the details of total revenue, tax, and sales displayed on the UI.
+         */
         refreshDetails();
         addProductBox1.setVisible(false);
         addProductBox2.setVisible(false);
     }
 
+    /**
+     * Fills the prices table with data fetched from the database.
+     */
     private void fillPricesTable() {
         pricesTable.getItems().clear();
         String query = "SELECT * FROM prices";
@@ -281,6 +333,9 @@ public class ManagerController {
         }
     }
 
+     /**
+     * Loads inventory data into the inventory table.
+     */
     private void loadInventoryData() {
         productList.clear();
         try (Connection connection = Main.getConnection()) {
@@ -303,6 +358,9 @@ public class ManagerController {
         }
     }
 
+    /**
+     * Loads user data into the employee table.
+     */
     private void loadUserData() {
         userList.clear();
         try (Connection connection = Main.getConnection()) {
@@ -322,6 +380,10 @@ public class ManagerController {
         }
     }
 
+    /**
+     * Updates stock for a selected product.
+     * @param event The event triggered by the update action.
+     */
     @FXML
     void updateStock(ActionEvent event) {
         String productName = productToUpdate;
@@ -759,6 +821,13 @@ public class ManagerController {
         }
     }
 
+    /**
+     * Displays an alert dialog with the specified parameters.
+     * @param type The type of alert (e.g., INFORMATION, WARNING, ERROR).
+     * @param title The title of the alert dialog.
+     * @param header The header text of the alert dialog.
+     * @param content The content text of the alert dialog.
+     */
     private void showAlert(Alert.AlertType type, String title, String header, String content) {
         Alert alert = new Alert(type);
         alert.setTitle(title);
